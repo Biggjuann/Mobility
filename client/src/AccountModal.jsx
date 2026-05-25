@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
+import { useTheme, FONTS } from './theme';
 import { register, login, logout, getEmail } from './lib/sync';
 
 // Minimum password length must match the server's policy.
 const MIN_PASSWORD = 8;
 
 export default function AccountModal({ onClose }) {
+  const t = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [mode, setMode] = useState('login'); // 'login' | 'register'
@@ -33,7 +35,6 @@ export default function AccountModal({ onClose }) {
     try {
       if (mode === 'register') await register(trimmed, password);
       else await login(trimmed, password);
-      // Re-run the app's load effect against freshly synced local state.
       window.location.reload();
     } catch (err) {
       setError(err.message || 'Something went wrong. Please try again.');
@@ -46,10 +47,12 @@ export default function AccountModal({ onClose }) {
     window.location.reload();
   };
 
-  const labelStyle = {
-    fontFamily: 'Geist Mono, monospace',
-    fontSize: '10px',
-    letterSpacing: '0.2em',
+  const labelStyle = { fontFamily: FONTS.mono, fontSize: '10px', letterSpacing: '0.2em' };
+  const inputStyle = {
+    fontFamily: FONTS.sans,
+    background: t.cardSolid,
+    border: `1px solid ${t.border}`,
+    color: t.ink,
   };
 
   return (
@@ -60,17 +63,14 @@ export default function AccountModal({ onClose }) {
     >
       <div
         className="w-full max-w-md rounded-t-3xl sm:rounded-3xl p-6 max-h-[85vh] overflow-y-auto"
-        style={{ background: '#F5F1EA' }}
+        style={{ background: t.bg }}
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2
-            className="text-2xl text-stone-900"
-            style={{ fontFamily: 'Fraunces, serif', fontWeight: 400 }}
-          >
+          <h2 className="text-2xl" style={{ fontFamily: FONTS.serif, fontWeight: 400, color: t.ink }}>
             {currentEmail ? 'Your account' : mode === 'register' ? 'Create account' : 'Sign in'}
           </h2>
-          <button onClick={onClose} className="text-stone-400 hover:text-stone-700">
+          <button onClick={onClose} style={{ color: t.faint }} aria-label="Close">
             <X size={20} />
           </button>
         </div>
@@ -78,42 +78,33 @@ export default function AccountModal({ onClose }) {
         {currentEmail ? (
           <div className="space-y-5">
             <div>
-              <div className="text-stone-500 mb-1 uppercase" style={labelStyle}>
+              <div className="mb-1 uppercase" style={{ ...labelStyle, color: t.faint }}>
                 Signed in as
               </div>
-              <div
-                className="text-lg text-stone-900"
-                style={{ fontFamily: 'Fraunces, serif' }}
-              >
+              <div className="text-lg" style={{ fontFamily: FONTS.serif, color: t.ink }}>
                 {currentEmail}
               </div>
             </div>
-            <p
-              className="text-sm text-stone-600 leading-relaxed"
-              style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}
-            >
-              Your progress syncs to the cloud automatically. Sign in on any device
-              to pick up where you left off.
+            <p className="text-sm leading-relaxed" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
+              Your progress syncs to the cloud automatically. Sign in on any device to
+              pick up where you left off.
             </p>
             <button
               onClick={doLogout}
-              className="w-full py-3 rounded-full border border-stone-400 text-stone-700 hover:bg-stone-200/60 uppercase"
-              style={labelStyle}
+              className="w-full py-3 rounded-full uppercase"
+              style={{ ...labelStyle, border: `1px solid ${t.borderStrong}`, color: t.muted }}
             >
               Sign out
             </button>
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-4">
-            <p
-              className="text-sm text-stone-600 leading-relaxed mb-2"
-              style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic' }}
-            >
+            <p className="text-sm leading-relaxed mb-2" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
               Sync your streak and progress across devices. Optional — the app works
               fully offline without an account.
             </p>
             <div>
-              <label className="block text-stone-500 mb-2 uppercase" style={labelStyle}>
+              <label className="block mb-2 uppercase" style={{ ...labelStyle, color: t.faint }}>
                 Email
               </label>
               <input
@@ -122,12 +113,12 @@ export default function AccountModal({ onClose }) {
                 inputMode="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/60 border border-stone-300 text-stone-900 focus:outline-none focus:border-stone-500"
-                style={{ fontFamily: 'Geist, system-ui, sans-serif' }}
+                className="w-full px-4 py-3 rounded-xl focus:outline-none"
+                style={inputStyle}
               />
             </div>
             <div>
-              <label className="block text-stone-500 mb-2 uppercase" style={labelStyle}>
+              <label className="block mb-2 uppercase" style={{ ...labelStyle, color: t.faint }}>
                 Password
               </label>
               <input
@@ -135,21 +126,18 @@ export default function AccountModal({ onClose }) {
                 autoComplete={mode === 'register' ? 'new-password' : 'current-password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl bg-white/60 border border-stone-300 text-stone-900 focus:outline-none focus:border-stone-500"
-                style={{ fontFamily: 'Geist, system-ui, sans-serif' }}
+                className="w-full px-4 py-3 rounded-xl focus:outline-none"
+                style={inputStyle}
               />
               {mode === 'register' && (
-                <div className="text-[11px] text-stone-500 mt-1.5" style={{ fontFamily: 'Geist, system-ui, sans-serif' }}>
+                <div className="text-[11px] mt-1.5" style={{ fontFamily: FONTS.sans, color: t.faint }}>
                   At least {MIN_PASSWORD} characters.
                 </div>
               )}
             </div>
 
             {error && (
-              <div
-                className="text-sm text-orange-700"
-                style={{ fontFamily: 'Geist, system-ui, sans-serif' }}
-              >
+              <div className="text-sm" style={{ fontFamily: FONTS.sans, color: t.accent }}>
                 {error}
               </div>
             )}
@@ -157,8 +145,8 @@ export default function AccountModal({ onClose }) {
             <button
               type="submit"
               disabled={busy}
-              className="w-full py-3 rounded-full bg-stone-900 text-orange-100 hover:bg-stone-800 disabled:opacity-50 uppercase"
-              style={labelStyle}
+              className="w-full py-3 rounded-full uppercase disabled:opacity-50"
+              style={{ ...labelStyle, background: t.btnBg, color: t.btnText }}
             >
               {busy ? 'Please wait…' : mode === 'register' ? 'Create account' : 'Sign in'}
             </button>
@@ -169,8 +157,8 @@ export default function AccountModal({ onClose }) {
                 setMode(mode === 'register' ? 'login' : 'register');
                 setError('');
               }}
-              className="w-full text-center text-stone-600 hover:text-stone-900 pt-1"
-              style={{ fontFamily: 'Fraunces, serif', fontStyle: 'italic', fontSize: '13px' }}
+              className="w-full text-center pt-1"
+              style={{ fontFamily: FONTS.serif, fontStyle: 'italic', fontSize: '13px', color: t.muted }}
             >
               {mode === 'register'
                 ? 'Already have an account? Sign in'

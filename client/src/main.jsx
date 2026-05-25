@@ -1,6 +1,7 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.jsx';
+import { StoreProvider } from './store';
 import './index.css';
 import { storage } from './lib/storage';
 import { pull, isAuthed } from './lib/sync';
@@ -19,7 +20,9 @@ window.storage = storage;
   }
   createRoot(document.getElementById('root')).render(
     <React.StrictMode>
-      <App />
+      <StoreProvider>
+        <App />
+      </StoreProvider>
     </React.StrictMode>,
   );
 })();
