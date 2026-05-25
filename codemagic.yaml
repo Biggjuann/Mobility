@@ -55,9 +55,24 @@ workflows:
           xcode-project use-profiles
       - name: Build & sign IPA
         script: |
+          # use-profiles doesn't reliably write signing into the Capacitor App
+          # target on this Xcode image, so force it on the archive command
+          # (highest-precedence build settings). The cert + profile now exist
+          # (created in the previous step with the Admin key), so these resolve.
+          PROFILE=$(ls -t "$HOME/Library/MobileDevice/Provisioning Profiles/"*.mobileprovision 2>/dev/null | head -1)
+          if [ -z "$PROFILE" ]; then
+            PROFILE=$(find "$HOME" "$CM_BUILD_DIR" -name '*.mobileprovision' 2>/dev/null | head -1)
+          fi
+          echo "Using profile: $PROFILE"
+          security cms -D -i "$PROFILE" > /tmp/pp.plist
+          UUID=$(/usr/libexec/PlistBuddy -c "Print :UUID" /tmp/pp.plist)
+          TEAM=$(/usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" /tmp/pp.plist)
+          CERT_SHA=$(security find-identity -v -p codesigning | grep -m1 -Eo '[0-9A-F]{40}')
+          echo "Signing with TEAM=$TEAM PROFILE_UUID=$UUID CERT=$CERT_SHA"
           xcode-project build-ipa \
             --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME"
+            --scheme "$XCODE_SCHEME" \
+            --archive-flags="DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE=$UUID CODE_SIGN_IDENTITY=$CERT_SHA"
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
