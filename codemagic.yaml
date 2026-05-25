@@ -1,27 +1,30 @@
 # Codemagic CI/CD — builds the Capacitor-wrapped iOS app from client/.
 #
-# Before this works you must, in the Codemagic UI:
-#   1. Connect your Apple Developer account (App Store Connect API key)
-#      and create an environment group named "appstore_credentials".
-#   2. Set up automatic code signing for bundle id com.mobility.app.
-#   3. Add a group "mobility_build" with VITE_API_URL = your Railway API URL.
+# Configured in the Codemagic UI:
+#   1. App Store Connect API key connected as an integration named "Mobility ASC".
+#   2. A variable group "mobility_build" containing VITE_API_URL (your Railway API URL).
 #
-# The native iOS project is generated in CI (it is not committed), so the
-# pipeline runs `npx cap add ios` before building.
+# Signing is automatic: Codemagic uses the connected API key to register the
+# bundle id (com.mobility.app) and fetch the distribution profile. The native
+# iOS project is generated in CI (it is not committed), so the pipeline runs
+# `npx cap add ios` before building.
 
 workflows:
   ios-capacitor:
     name: Mobility iOS
     instance_type: mac_mini_m2
     max_build_duration: 60
+    integrations:
+      app_store_connect: Mobility ASC
     environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.mobility.app
       groups:
-        - appstore_credentials
         - mobility_build
       vars:
         XCODE_WORKSPACE: 'client/ios/App/App.xcworkspace'
         XCODE_SCHEME: 'App'
-        BUNDLE_ID: 'com.mobility.app'
       node: 20
       xcode: latest
       cocoapods: default
@@ -55,13 +58,13 @@ workflows:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
     publishing:
-      # Uncomment once App Store Connect is configured to auto-upload to TestFlight.
-      # app_store_connect:
-      #   auth: integration
-      #   submit_to_testflight: true
       email:
         recipients:
           - jungbrothers@gmail.com
         notify:
           success: true
           failure: true
+      # Enable after the app record exists in App Store Connect (next step):
+      # app_store_connect:
+      #   auth: integration
+      #   submit_to_testflight: true
