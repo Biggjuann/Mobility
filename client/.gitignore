@@ -9,3 +9,6 @@ dist
 ios/App/Pods
 ios/App/App/public
 DerivedData
+
+# Generated native iOS project (created in CI via `npx cap add ios`)
+ios/
