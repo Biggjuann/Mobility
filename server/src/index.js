@@ -91,6 +91,7 @@ const asyncHandler = (fn) => (req, res, next) =>
   Promise.resolve(fn(req, res, next)).catch(next);
 
 // ── Routes ─────────────────────────────────────────────────────────────────
+app.get('/', (_req, res) => res.json({ service: 'mobility-api', ok: true }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
 app.post(
