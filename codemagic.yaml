@@ -4,10 +4,10 @@
 #   1. App Store Connect API key connected as an integration named "Mobility ASC".
 #   2. A variable group "mobility_build" containing VITE_API_URL (your Railway API URL).
 #
-# Signing is automatic: Codemagic uses the connected API key to register the
-# bundle id (com.mobility.app) and fetch the distribution profile. The native
-# iOS project is generated in CI (it is not committed), so the pipeline runs
-# `npx cap add ios` before building.
+# Signing: the "Set up code signing" step uses the connected API key to register
+# the bundle id, create a distribution certificate + provisioning profile if they
+# don't exist yet (--create), then applies them. The native iOS project is
+# generated in CI (it is not committed), so the pipeline runs `npx cap add ios`.
 
 workflows:
   ios-capacitor:
@@ -17,12 +17,10 @@ workflows:
     integrations:
       app_store_connect: Mobility ASC
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.mobility.app
       groups:
         - mobility_build
       vars:
+        BUNDLE_ID: 'com.mobility.app'
         XCODE_WORKSPACE: 'client/ios/App/App.xcworkspace'
         XCODE_SCHEME: 'App'
       node: 20
@@ -48,6 +46,11 @@ workflows:
           pod install
       - name: Set up code signing
         script: |
+          keychain initialize
+          app-store-connect fetch-signing-files "$BUNDLE_ID" \
+            --type IOS_APP_STORE \
+            --create
+          keychain add-certificates
           xcode-project use-profiles
       - name: Build & sign IPA
         script: |
