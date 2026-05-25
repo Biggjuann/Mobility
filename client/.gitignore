@@ -1,0 +1,11 @@
+node_modules
+dist
+.env
+.env.local
+*.local
+
+# Capacitor native projects are generated; keep the repo lean.
+# Generated via `npx cap add ios` in CI (Codemagic) or locally.
+ios/App/Pods
+ios/App/App/public
+DerivedData

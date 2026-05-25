@@ -1,0 +1,8 @@
+{
+  "appId": "com.mobility.app",
+  "appName": "Mobility",
+  "webDir": "dist",
+  "ios": {
+    "contentInset": "always"
+  }
+}
