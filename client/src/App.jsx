@@ -17,7 +17,10 @@ import AccountModal from './AccountModal.jsx';
 function BodyBackground() {
   const t = useTheme();
   useEffect(() => {
+    document.documentElement.style.background = t.bg;
     document.body.style.background = t.bg;
+    const root = document.getElementById('root');
+    if (root) root.style.background = t.bg;
     const meta = document.querySelector('meta[name="theme-color"]');
     if (meta) meta.setAttribute('content', t.bg);
   }, [t.bg]);
