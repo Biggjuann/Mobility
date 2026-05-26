@@ -45,6 +45,11 @@ workflows:
         script: |
           cd client/ios/App
           pod install
+      - name: Set build number
+        script: |
+          # TestFlight requires a unique, increasing build number per upload.
+          cd client/ios/App
+          agvtool new-version -all "${BUILD_NUMBER:-1}"
       - name: Set up code signing
         script: |
           set -e
@@ -88,7 +93,6 @@ workflows:
         notify:
           success: true
           failure: true
-      # Enable after the app record exists in App Store Connect (next step):
-      # app_store_connect:
-      #   auth: integration
-      #   submit_to_testflight: true
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
