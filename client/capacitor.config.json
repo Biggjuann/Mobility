@@ -1,5 +1,5 @@
 {
-  "appId": "com.mobility.app",
+  "appId": "com.jungbrothers.mobility",
   "appName": "Mobility",
   "webDir": "dist",
   "ios": {

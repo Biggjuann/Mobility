@@ -6,7 +6,7 @@
 #   2. A variable group "mobility_build" containing VITE_API_URL (Railway API URL).
 #
 # The "Set up code signing" step explicitly creates (or fetches) the
-# distribution certificate + provisioning profile for com.mobility.app using the
+# distribution certificate + provisioning profile for the app's bundle id using the
 # connected API key, adds the certificate to the keychain, and applies the
 # profile to the project. The native iOS project is generated in CI.
 
@@ -21,7 +21,7 @@ workflows:
       groups:
         - mobility_build
       vars:
-        BUNDLE_ID: 'com.mobility.app'
+        BUNDLE_ID: 'com.jungbrothers.mobility'
         XCODE_WORKSPACE: 'client/ios/App/App.xcworkspace'
         XCODE_SCHEME: 'App'
       node: 20
