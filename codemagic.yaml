@@ -47,12 +47,20 @@ workflows:
           pod install
       - name: Set up code signing
         script: |
+          set -e
           keychain initialize
+          echo "=== ASC env present? ==="
+          echo "issuer set: ${APP_STORE_CONNECT_ISSUER_ID:+yes} / key set: ${APP_STORE_CONNECT_KEY_IDENTIFIER:+yes}"
+          echo "=== Creating/fetching signing files ==="
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --create
+          echo "=== Adding certificate to keychain ==="
           keychain add-certificates
+          echo "=== Applying profiles ==="
           xcode-project use-profiles
+          echo "=== Profiles on disk ==="
+          ls -la "$HOME/Library/MobileDevice/Provisioning Profiles/" || true
       - name: Build & sign IPA
         script: |
           # use-profiles doesn't reliably write signing into the Capacitor App
