@@ -49,19 +49,15 @@ workflows:
         script: |
           set -e
           keychain initialize
-          PROFILES_DIR="$HOME/Library/MobileDevice/Provisioning Profiles"
-          mkdir -p "$PROFILES_DIR"
-          # Use a persistent private key (stored as a secure env var) so the same
-          # distribution certificate is reused on every build instead of creating
-          # throwaway certs whose keys are lost.
+          # Persistent private key (secure env var) so the same distribution
+          # certificate is reused on every build.
           app-store-connect fetch-signing-files "$BUNDLE_ID" \
             --type IOS_APP_STORE \
             --certificate-key "@env:CERTIFICATE_PRIVATE_KEY" \
-            --create \
-            --profiles-directory "$PROFILES_DIR"
+            --create
           keychain add-certificates
-          xcode-project use-profiles --profiles-directory "$PROFILES_DIR"
-          ls -la "$PROFILES_DIR"
+          xcode-project use-profiles
+          ls -la "$HOME/Library/MobileDevice/Provisioning Profiles/" || true
       - name: Build & sign IPA
         script: |
           # use-profiles doesn't reliably write signing into the Capacitor App
