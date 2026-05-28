@@ -40,6 +40,13 @@ workflows:
           cd client
           npx cap add ios || true
           npx cap sync ios
+      - name: Mark app as iPhone-only
+        script: |
+          # Capacitor scaffolds a Universal (iPhone + iPad) app; restrict to
+          # iPhone so App Store Connect doesn't require iPad screenshots.
+          sed -i '' 's|TARGETED_DEVICE_FAMILY = "1,2";|TARGETED_DEVICE_FAMILY = "1";|g' \
+            client/ios/App/App.xcodeproj/project.pbxproj
+          grep -n 'TARGETED_DEVICE_FAMILY' client/ios/App/App.xcodeproj/project.pbxproj | head -4
       - name: Resolve Swift Package dependencies
         script: |
           xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" \
