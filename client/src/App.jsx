@@ -115,7 +115,17 @@ export default function App() {
         </>
       )}
 
-      {/* Overlays */}
+      {/* Overlays — order matters: later entries paint on top of earlier ones. */}
+      {historyDate !== null && (
+        <HistoryScreen initialDate={historyDate} onClose={() => setHistoryDate(null)} />
+      )}
+      {activeSection && (
+        <SectionScreen
+          section={activeSection}
+          onClose={() => setActiveSection(null)}
+          onOpenDrill={setDetailDrill}
+        />
+      )}
       {detailDrill && (
         <DrillDetail
           drill={detailDrill}
@@ -138,16 +148,6 @@ export default function App() {
       )}
       {showAccount && <AccountModal onClose={() => setShowAccount(false)} />}
       {showPaywall && <Paywall onClose={() => setShowPaywall(false)} />}
-      {historyDate !== null && (
-        <HistoryScreen initialDate={historyDate} onClose={() => setHistoryDate(null)} />
-      )}
-      {activeSection && (
-        <SectionScreen
-          section={activeSection}
-          onClose={() => setActiveSection(null)}
-          onOpenDrill={setDetailDrill}
-        />
-      )}
     </ThemeProvider>
   );
 }
