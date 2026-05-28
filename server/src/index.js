@@ -17,6 +17,7 @@ const __dirname = path.dirname(__filename);
 // Load the legal pages once at startup so requests are pure memory reads.
 const PRIVACY_HTML = fs.readFileSync(path.join(__dirname, 'legal/privacy.html'), 'utf8');
 const TERMS_HTML = fs.readFileSync(path.join(__dirname, 'legal/terms.html'), 'utf8');
+const SUPPORT_HTML = fs.readFileSync(path.join(__dirname, 'legal/support.html'), 'utf8');
 
 const app = express();
 
@@ -110,6 +111,7 @@ app.get('/health', (_req, res) => res.json({ ok: true }));
 // Public legal pages (linked from the paywall and App Store Connect listing).
 app.get('/privacy', (_req, res) => res.type('html').send(PRIVACY_HTML));
 app.get('/terms', (_req, res) => res.type('html').send(TERMS_HTML));
+app.get('/support', (_req, res) => res.type('html').send(SUPPORT_HTML));
 
 app.post(
   '/api/auth/register',
