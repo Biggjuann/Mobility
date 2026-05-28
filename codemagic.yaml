@@ -76,10 +76,14 @@ workflows:
           TEAM=$(/usr/libexec/PlistBuddy -c "Print :TeamIdentifier:0" /tmp/pp.plist)
           CERT_SHA=$(security find-identity -v -p codesigning | grep -m1 -Eo '[0-9A-F]{40}')
           echo "Signing with TEAM=$TEAM PROFILE_UUID=$UUID CERT=$CERT_SHA"
+          # NOTE: do not pass PROVISIONING_PROFILE via --archive-flags — it would
+          # apply to all targets (including SPM packages like RevenueCat which
+          # cannot have a profile). The profile is written into the App target's
+          # pbxproj by the earlier `xcode-project use-profiles` step.
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
-            --archive-flags="DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE=$UUID CODE_SIGN_IDENTITY=$CERT_SHA" \
+            --archive-flags="DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Manual CODE_SIGN_IDENTITY=$CERT_SHA" \
           || {
             echo "=== ARCHIVE FAILED — xcodebuild error lines ==="
             grep -h -E "error:|error |fatal|ld: |Undefined symbol|requires a higher|not found" /tmp/xcodebuild_logs/*.log 2>/dev/null | tail -n 60
