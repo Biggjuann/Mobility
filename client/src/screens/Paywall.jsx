@@ -3,6 +3,7 @@ import { X, Check } from 'lucide-react';
 import { useTheme, FONTS } from '../theme';
 import { useStore } from '../store';
 import { getPackages, purchase, restore, purchasesAvailable } from '../lib/purchases';
+import { PRIVACY_URL, TERMS_URL } from '../lib/legal';
 
 const BENEFITS = [
   'All 6 months — Foundation through Advanced',
@@ -178,6 +179,20 @@ export default function Paywall({ onClose }) {
             in your App Store account settings. The free trial converts to a paid
             subscription unless canceled during the trial.
           </p>
+          {(TERMS_URL || PRIVACY_URL) && (
+            <div className="flex justify-center gap-4 mt-3 text-[11px]" style={{ fontFamily: FONTS.sans }}>
+              {TERMS_URL && (
+                <a href={TERMS_URL} target="_blank" rel="noopener noreferrer" style={{ color: t.faint, textDecoration: 'underline' }}>
+                  Terms of Use
+                </a>
+              )}
+              {PRIVACY_URL && (
+                <a href={PRIVACY_URL} target="_blank" rel="noopener noreferrer" style={{ color: t.faint, textDecoration: 'underline' }}>
+                  Privacy Policy
+                </a>
+              )}
+            </div>
+          )}
           {!purchasesAvailable() && (
             <p className="text-[11px] text-center mt-3" style={{ fontFamily: FONTS.sans, color: t.faint }}>
               Purchases are only available in the App Store version.

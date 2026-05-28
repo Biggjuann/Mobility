@@ -5,8 +5,18 @@ import rateLimit from 'express-rate-limit';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { config } from './config.js';
 import { query, migrate } from './db.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Load the legal pages once at startup so requests are pure memory reads.
+const PRIVACY_HTML = fs.readFileSync(path.join(__dirname, 'legal/privacy.html'), 'utf8');
+const TERMS_HTML = fs.readFileSync(path.join(__dirname, 'legal/terms.html'), 'utf8');
 
 const app = express();
 
@@ -14,7 +24,10 @@ const app = express();
 // rate limiter) are accurate.
 app.set('trust proxy', 1);
 
-app.use(helmet());
+// CSP off because the API returns JSON (CSP doesn't apply to it) and would
+// otherwise block the inline styles in the legal HTML pages. Helmet still
+// applies all the other useful headers (HSTS, X-Frame-Options, nosniff, etc.).
+app.use(helmet({ contentSecurityPolicy: false }));
 app.use(
   cors({
     origin(origin, cb) {
@@ -93,6 +106,10 @@ const asyncHandler = (fn) => (req, res, next) =>
 // ── Routes ─────────────────────────────────────────────────────────────────
 app.get('/', (_req, res) => res.json({ service: 'mobility-api', ok: true }));
 app.get('/health', (_req, res) => res.json({ ok: true }));
+
+// Public legal pages (linked from the paywall and App Store Connect listing).
+app.get('/privacy', (_req, res) => res.type('html').send(PRIVACY_HTML));
+app.get('/terms', (_req, res) => res.type('html').send(TERMS_HTML));
 
 app.post(
   '/api/auth/register',

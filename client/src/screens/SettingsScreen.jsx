@@ -11,10 +11,14 @@ import {
   ChevronRight,
   Sparkles,
   RefreshCw,
+  ShieldCheck,
+  FileText,
+  ExternalLink,
 } from 'lucide-react';
 import { useTheme, FONTS } from '../theme';
 import { useStore } from '../store';
 import { PROGRAMS } from '../lib/program';
+import { PRIVACY_URL, TERMS_URL } from '../lib/legal';
 
 function Toggle({ on, onChange, t }) {
   return (
@@ -226,6 +230,26 @@ export default function SettingsScreen({ onChangeMonth, onOpenAccount, onPaywall
           or conditions. Stop immediately if you feel sharp pain. You exercise at your
           own risk.
         </Disclosure>
+      )}
+
+      {PRIVACY_URL && (
+        <Row
+          t={t}
+          icon={<ShieldCheck {...ICON} />}
+          label="Privacy Policy"
+          onClick={() => window.open(PRIVACY_URL, '_blank', 'noopener,noreferrer')}
+          right={<ExternalLink size={14} style={{ color: t.faint }} />}
+        />
+      )}
+
+      {TERMS_URL && (
+        <Row
+          t={t}
+          icon={<FileText {...ICON} />}
+          label="Terms of Service"
+          onClick={() => window.open(TERMS_URL, '_blank', 'noopener,noreferrer')}
+          right={<ExternalLink size={14} style={{ color: t.faint }} />}
+        />
       )}
 
       <div className="text-center mt-12 text-[10px] uppercase tracking-[0.3em]" style={{ fontFamily: FONTS.mono, color: t.faint }}>
