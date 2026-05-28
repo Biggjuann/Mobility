@@ -79,7 +79,14 @@ workflows:
           xcode-project build-ipa \
             --project "$XCODE_PROJECT" \
             --scheme "$XCODE_SCHEME" \
-            --archive-flags="DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE=$UUID CODE_SIGN_IDENTITY=$CERT_SHA"
+            --archive-flags="DEVELOPMENT_TEAM=$TEAM CODE_SIGN_STYLE=Manual PROVISIONING_PROFILE=$UUID CODE_SIGN_IDENTITY=$CERT_SHA" \
+          || {
+            echo "=== ARCHIVE FAILED — xcodebuild error lines ==="
+            grep -h -E "error:|error |fatal|ld: |Undefined symbol|requires a higher|not found" /tmp/xcodebuild_logs/*.log 2>/dev/null | tail -n 60
+            echo "=== last 80 log lines ==="
+            tail -n 80 /tmp/xcodebuild_logs/*.log 2>/dev/null
+            exit 1
+          }
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
