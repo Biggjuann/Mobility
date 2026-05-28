@@ -6,7 +6,7 @@ import { getSession, getMorning, DAY_KEYS, DAY_SHORT, DAY_LONG, PROGRAMS } from 
 import DrillCard from '../components/DrillCard';
 import RestScreen from './RestScreen';
 
-export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDrill }) {
+export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDrill, onPaywall }) {
   const t = useTheme();
   const {
     currentMonth,
@@ -19,6 +19,7 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
     toggleComplete,
     advanceMonth,
     dismissAdvance,
+    isPro,
   } = useStore();
 
   const today = new Date().getDay();
@@ -102,11 +103,11 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
           </div>
           <div className="flex gap-2">
             <button
-              onClick={advanceMonth}
+              onClick={() => ((currentMonth + 1 > 1 && !isPro) ? onPaywall() : advanceMonth())}
               className="flex items-center gap-2 px-4 py-2 rounded-full"
               style={{ background: t.btnBg, color: t.btnText, fontFamily: FONTS.mono, fontSize: '10px', letterSpacing: '0.2em' }}
             >
-              ADVANCE <ArrowRight size={12} />
+              {(!isPro && currentMonth + 1 > 1) ? 'UNLOCK' : 'ADVANCE'} <ArrowRight size={12} />
             </button>
             <button
               onClick={dismissAdvance}

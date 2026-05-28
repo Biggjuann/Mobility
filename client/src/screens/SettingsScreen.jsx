@@ -9,6 +9,8 @@ import {
   AlertTriangle,
   User,
   ChevronRight,
+  Sparkles,
+  RefreshCw,
 } from 'lucide-react';
 import { useTheme, FONTS } from '../theme';
 import { useStore } from '../store';
@@ -53,11 +55,12 @@ function Row({ t, icon, label, value, onClick, right }) {
   );
 }
 
-export default function SettingsScreen({ onChangeMonth, onOpenAccount }) {
+export default function SettingsScreen({ onChangeMonth, onOpenAccount, onPaywall }) {
   const t = useTheme();
-  const { currentMonth, settings, updateSettings, resetProgress } = useStore();
+  const { currentMonth, settings, updateSettings, resetProgress, isPro, restorePurchases } = useStore();
   const [confirmReset, setConfirmReset] = useState(false);
   const [open, setOpen] = useState(null); // 'about' | 'injury' | null
+  const [restoreMsg, setRestoreMsg] = useState('');
 
   const ICON = { size: 18, strokeWidth: 1.5 };
 
@@ -74,6 +77,36 @@ export default function SettingsScreen({ onChangeMonth, onOpenAccount }) {
         onClick={onOpenAccount}
         right={<ChevronRight size={16} style={{ color: t.faint }} />}
       />
+
+      <Row
+        t={t}
+        icon={<Sparkles {...ICON} />}
+        label={isPro ? 'Mobility Pro' : 'Go Pro — unlock all months'}
+        value={isPro ? 'Active' : undefined}
+        onClick={isPro ? undefined : onPaywall}
+        right={isPro ? null : <ChevronRight size={16} style={{ color: t.faint }} />}
+      />
+
+      {!isPro && (
+        <>
+          <Row
+            t={t}
+            icon={<RefreshCw {...ICON} />}
+            label="Restore Purchases"
+            onClick={async () => {
+              setRestoreMsg('Checking…');
+              const ok = await restorePurchases();
+              setRestoreMsg(ok ? 'Purchases restored.' : 'No active subscription found.');
+            }}
+            right={<ChevronRight size={16} style={{ color: t.faint }} />}
+          />
+          {restoreMsg && (
+            <div className="py-2 pl-9 text-sm" style={{ fontFamily: FONTS.sans, color: t.muted }}>
+              {restoreMsg}
+            </div>
+          )}
+        </>
+      )}
 
       <Row
         t={t}

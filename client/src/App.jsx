@@ -9,6 +9,7 @@ import SettingsScreen from './screens/SettingsScreen';
 import HistoryScreen from './screens/HistoryScreen';
 import DrillDetail from './screens/DrillDetail';
 import Onboarding from './screens/Onboarding';
+import Paywall from './screens/Paywall';
 import TimerModal from './modals/TimerModal';
 import MonthPicker from './modals/MonthPicker';
 import AccountModal from './AccountModal.jsx';
@@ -39,6 +40,7 @@ export default function App() {
     isComplete,
     toggleComplete,
     markComplete,
+    isPro,
   } = useStore();
 
   const [tab, setTab] = useState('today');
@@ -47,6 +49,23 @@ export default function App() {
   const [picker, setPicker] = useState(null); // null | 'preview' | 'change'
   const [showAccount, setShowAccount] = useState(false);
   const [historyDate, setHistoryDate] = useState(null);
+  const [showPaywall, setShowPaywall] = useState(false);
+
+  // Month 1 is free; advancing to / switching into any later month requires Pro.
+  const requireProForMonth = (m) => m > 1 && !isPro;
+
+  const handlePickerSelect = (m) => {
+    if (picker === 'change') {
+      if (requireProForMonth(m)) {
+        setPicker(null);
+        setShowPaywall(true);
+        return;
+      }
+      jumpToMonth(m);
+    } else {
+      setViewMonth(m); // previewing any month is always allowed
+    }
+  };
 
   if (!loaded) {
     return (
@@ -71,6 +90,7 @@ export default function App() {
                 onOpenMonthPicker={() => setPicker('preview')}
                 onOpenAccount={() => setShowAccount(true)}
                 onOpenDrill={setDetailDrill}
+                onPaywall={() => setShowPaywall(true)}
               />
             )}
             {tab === 'progress' && <ProgressScreen onOpenHistory={setHistoryDate} />}
@@ -86,6 +106,7 @@ export default function App() {
               <SettingsScreen
                 onChangeMonth={() => setPicker('change')}
                 onOpenAccount={() => setShowAccount(true)}
+                onPaywall={() => setShowPaywall(true)}
               />
             )}
           </main>
@@ -110,11 +131,12 @@ export default function App() {
         <MonthPicker
           currentMonth={currentMonth}
           daysOnMonth={daysOnMonth}
-          onSelect={picker === 'change' ? jumpToMonth : setViewMonth}
+          onSelect={handlePickerSelect}
           onClose={() => setPicker(null)}
         />
       )}
       {showAccount && <AccountModal onClose={() => setShowAccount(false)} />}
+      {showPaywall && <Paywall onClose={() => setShowPaywall(false)} />}
       {historyDate !== null && (
         <HistoryScreen initialDate={historyDate} onClose={() => setHistoryDate(null)} />
       )}

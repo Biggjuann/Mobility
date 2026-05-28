@@ -8,6 +8,9 @@ const vite = await createServer({
   root: process.cwd(),
   logLevel: 'error',
   server: { middlewareMode: true },
+  // Inline RevenueCat so its extensionless ESM imports get bundled rather than
+  // resolved raw by Node (only matters for this SSR test harness).
+  ssr: { noExternal: [/@revenuecat\//] },
 });
 
 const load = (p) => vite.ssrLoadModule(p);
@@ -28,6 +31,7 @@ const screens = [
   ['DrillDetail', '/src/screens/DrillDetail.jsx', { drill, isComplete: false, onToggle() {}, onClose() {}, onStartTimer() {} }],
   ['RestScreen', '/src/screens/RestScreen.jsx', {}],
   ['Onboarding', '/src/screens/Onboarding.jsx', {}],
+  ['Paywall', '/src/screens/Paywall.jsx', { onClose() {} }],
   ['TimerModal', '/src/modals/TimerModal.jsx', { drill, onClose() {}, onComplete() {} }],
   ['MonthPicker', '/src/modals/MonthPicker.jsx', { currentMonth: 2, daysOnMonth: 5, onSelect() {}, onClose() {} }],
   ['BottomNav', '/src/components/BottomNav.jsx', { active: 'today', onChange() {} }],

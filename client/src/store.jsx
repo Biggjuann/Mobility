@@ -8,6 +8,7 @@ import React, {
 } from 'react';
 import { todayKey, dateKey, daysBetween, addDays } from './lib/dates';
 import { scheduleReminder } from './lib/notifications';
+import { initPurchases, checkPro, restore as restorePro } from './lib/purchases';
 
 const StoreContext = createContext(null);
 
@@ -72,6 +73,7 @@ export function StoreProvider({ children }) {
   const [dismissedAdvanceFor, setDismissedAdvanceFor] = useState(null);
   const [settings, setSettings] = useState(DEFAULT_SETTINGS);
   const [onboarded, setOnboarded] = useState(true); // assume true until load proves otherwise
+  const [isPro, setIsPro] = useState(false);
 
   useEffect(() => {
     (async () => {
@@ -107,6 +109,24 @@ export function StoreProvider({ children }) {
     if (!loaded) return;
     set('mobility-completed', JSON.stringify(completed));
   }, [completed, loaded]);
+
+  // Initialize in-app purchases and load the user's Pro entitlement.
+  useEffect(() => {
+    (async () => {
+      await initPurchases();
+      setIsPro(await checkPro());
+    })();
+  }, []);
+
+  const refreshPro = useCallback(async () => {
+    setIsPro(await checkPro());
+  }, []);
+
+  const restorePurchases = useCallback(async () => {
+    const ok = await restorePro();
+    setIsPro(ok);
+    return ok;
+  }, []);
 
   const { streak, bestStreak } = useMemo(() => computeStreaks(completed), [completed]);
   const daysOnMonth = useMemo(() => daysBetween(monthStart), [monthStart]);
@@ -223,6 +243,9 @@ export function StoreProvider({ children }) {
     setViewMonth,
     settings,
     onboarded,
+    isPro,
+    refreshPro,
+    restorePurchases,
     streak,
     bestStreak,
     canAdvance,
