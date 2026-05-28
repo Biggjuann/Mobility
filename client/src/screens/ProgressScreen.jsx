@@ -6,21 +6,21 @@ import { getSession, getMorning, DAY_KEYS, PROGRAMS } from '../lib/program';
 import { dateKey, addDays } from '../lib/dates';
 import Calendar from '../components/Calendar';
 
-// Average completion ratio across the last `days` scheduled (non-rest) days.
-function completionPct(completed, currentMonth, days) {
-  let sum = 0;
-  let n = 0;
+// "Showed up" rate: of the past `days` calendar days that had a scheduled
+// session (non-Sunday), how many did the user log at least one drill on.
+// This is more meaningful for new users than averaging drill-completion
+// ratios (which dilute to ~zero after one day of activity).
+function attendance(completed, days) {
+  let active = 0;
+  let scheduled = 0;
   for (let i = 0; i < days; i++) {
     const d = addDays(new Date(), -i);
     const key = DAY_KEYS[d.getDay()];
-    if (key === 'sunday') continue; // rest day, not scheduled
-    const scheduled = getMorning(currentMonth).drills.length + getSession(currentMonth, key).drills.length;
-    if (!scheduled) continue;
-    const done = Object.keys(completed[dateKey(d)] || {}).length;
-    sum += Math.min(done, scheduled) / scheduled;
-    n++;
+    if (key === 'sunday') continue;
+    scheduled++;
+    if (Object.keys(completed[dateKey(d)] || {}).length > 0) active++;
   }
-  return n ? Math.round((sum / n) * 100) : 0;
+  return { pct: scheduled ? Math.round((active / scheduled) * 100) : 0, active, scheduled };
 }
 
 export default function ProgressScreen({ onOpenHistory }) {
@@ -39,8 +39,8 @@ export default function ProgressScreen({ onOpenHistory }) {
     [completed],
   );
 
-  const weekly = useMemo(() => completionPct(completed, currentMonth, 7), [completed, currentMonth]);
-  const monthly = useMemo(() => completionPct(completed, currentMonth, 30), [completed, currentMonth]);
+  const weekly = useMemo(() => attendance(completed, 7), [completed]);
+  const monthly = useMemo(() => attendance(completed, 30), [completed]);
   const totalSessions = markedSet.size;
   const throughPct = Math.min(100, Math.round((daysOnMonth / 30) * 100));
 
@@ -73,7 +73,7 @@ export default function ProgressScreen({ onOpenHistory }) {
               {streak}
             </span>
             <span className="text-sm" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
-              days
+              {streak === 1 ? 'day' : 'days'}
             </span>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function ProgressScreen({ onOpenHistory }) {
               {bestStreak}
             </span>
             <span className="text-sm" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
-              days
+              {bestStreak === 1 ? 'day' : 'days'}
             </span>
           </div>
         </div>
@@ -107,15 +107,25 @@ export default function ProgressScreen({ onOpenHistory }) {
 
       {/* Completion stats */}
       <div className="grid grid-cols-2 gap-3 mb-3">
-        <Stat t={t} label="Weekly Completion" value={`${weekly}%`} />
-        <Stat t={t} label="Monthly Completion" value={`${monthly}%`} />
-      </div>
-      <div className="grid grid-cols-2 gap-3">
-        <Stat t={t} label="Total Sessions" value={String(totalSessions)} />
         <Stat
           t={t}
-          label={`You're ${throughPct}% through`}
-          value={`Month ${currentMonth}`}
+          label="This Week"
+          value={`${weekly.pct}%`}
+          sub={`${weekly.active} of ${weekly.scheduled} day${weekly.scheduled === 1 ? '' : 's'}`}
+        />
+        <Stat
+          t={t}
+          label="This Month"
+          value={`${monthly.pct}%`}
+          sub={`${monthly.active} of ${monthly.scheduled} days`}
+        />
+      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <Stat t={t} label="Total Sessions" value={String(totalSessions)} sub="all time" />
+        <Stat
+          t={t}
+          label={`Month ${currentMonth}`}
+          value={`${throughPct}%`}
           sub={PROGRAMS[currentMonth].name}
         />
       </div>
