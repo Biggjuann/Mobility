@@ -10,6 +10,7 @@ import HistoryScreen from './screens/HistoryScreen';
 import DrillDetail from './screens/DrillDetail';
 import Onboarding from './screens/Onboarding';
 import Paywall from './screens/Paywall';
+import SectionScreen from './screens/SectionScreen';
 import TimerModal from './modals/TimerModal';
 import MonthPicker from './modals/MonthPicker';
 import AccountModal from './AccountModal.jsx';
@@ -50,6 +51,7 @@ export default function App() {
   const [showAccount, setShowAccount] = useState(false);
   const [historyDate, setHistoryDate] = useState(null);
   const [showPaywall, setShowPaywall] = useState(false);
+  const [activeSection, setActiveSection] = useState(null);
 
   // Month 1 is free; advancing to / switching into any later month requires Pro.
   const requireProForMonth = (m) => m > 1 && !isPro;
@@ -88,8 +90,7 @@ export default function App() {
             {tab === 'today' && (
               <TodayScreen
                 onOpenMonthPicker={() => setPicker('preview')}
-                onOpenAccount={() => setShowAccount(true)}
-                onOpenDrill={setDetailDrill}
+                onOpenSection={setActiveSection}
                 onPaywall={() => setShowPaywall(true)}
               />
             )}
@@ -139,6 +140,13 @@ export default function App() {
       {showPaywall && <Paywall onClose={() => setShowPaywall(false)} />}
       {historyDate !== null && (
         <HistoryScreen initialDate={historyDate} onClose={() => setHistoryDate(null)} />
+      )}
+      {activeSection && (
+        <SectionScreen
+          section={activeSection}
+          onClose={() => setActiveSection(null)}
+          onOpenDrill={setDetailDrill}
+        />
       )}
     </ThemeProvider>
   );

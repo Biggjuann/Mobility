@@ -31,12 +31,12 @@ export default function BottomNav({ active, onChange }) {
               key={id}
               onClick={() => onChange(id)}
               className="flex-1 flex flex-col items-center gap-1 py-3"
-              style={{ color: on ? t.accent : t.faint }}
+              style={{ color: on ? t.ink : t.faint }}
             >
-              <Icon size={20} strokeWidth={on ? 2 : 1.5} />
+              <Icon size={22} strokeWidth={on ? 2 : 1.5} fill={on && id === 'today' ? 'currentColor' : 'none'} />
               <span
-                className="text-[10px] tracking-[0.1em]"
-                style={{ fontFamily: FONTS.mono }}
+                className="text-[11px]"
+                style={{ fontFamily: FONTS.sans, fontWeight: on ? 600 : 400 }}
               >
                 {label}
               </span>

@@ -32,6 +32,7 @@ const screens = [
   ['RestScreen', '/src/screens/RestScreen.jsx', {}],
   ['Onboarding', '/src/screens/Onboarding.jsx', {}],
   ['Paywall', '/src/screens/Paywall.jsx', { onClose() {} }],
+  ['SectionScreen', '/src/screens/SectionScreen.jsx', { section: { title: 'Morning Routine', intro: 'x', drills: PROGRAMS[1].morning.drills }, onClose() {}, onOpenDrill() {} }],
   ['TimerModal', '/src/modals/TimerModal.jsx', { drill, onClose() {}, onComplete() {} }],
   ['MonthPicker', '/src/modals/MonthPicker.jsx', { currentMonth: 2, daysOnMonth: 5, onSelect() {}, onClose() {} }],
   ['BottomNav', '/src/components/BottomNav.jsx', { active: 'today', onChange() {} }],

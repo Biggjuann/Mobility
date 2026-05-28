@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { Flame, User, ChevronDown, ArrowRight } from 'lucide-react';
+import { Flame, ChevronDown, ArrowRight } from 'lucide-react';
 import { useTheme, FONTS } from '../theme';
 import { useStore } from '../store';
 import { getSession, getMorning, DAY_KEYS, DAY_SHORT, DAY_LONG, PROGRAMS } from '../lib/program';
-import DrillCard from '../components/DrillCard';
 import RestScreen from './RestScreen';
 
-export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDrill, onPaywall }) {
+export default function TodayScreen({ onOpenMonthPicker, onOpenSection, onPaywall }) {
   const t = useTheme();
   const {
     currentMonth,
@@ -16,7 +15,6 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
     canAdvance,
     streak,
     isComplete,
-    toggleComplete,
     advanceMonth,
     dismissAdvance,
     isPro,
@@ -38,60 +36,127 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
   const deepDone = session.drills.filter((d) => isComplete(d.id)).length;
   const totalDone = morningDone + deepDone;
   const totalCount = morning.drills.length + session.drills.length;
+  const pct = totalCount ? (totalDone / totalCount) * 100 : 0;
 
-  const label = (text, extra) => (
-    <div
-      className="text-[10px] uppercase tracking-[0.3em]"
-      style={{ fontFamily: FONTS.mono, color: t.faint, ...extra }}
-    >
-      {text}
-    </div>
-  );
+  const advanceLabel = !isPro && currentMonth + 1 > 1 ? 'UNLOCK' : 'ADVANCE';
+  const onAdvanceClick = () =>
+    !isPro && currentMonth + 1 > 1 ? onPaywall() : advanceMonth();
 
   return (
     <div>
       {/* HEADER */}
-      <header className="flex items-center justify-between mb-8">
-        <button onClick={onOpenMonthPicker} className="flex flex-col items-start group">
+      <header className="flex justify-between items-start mb-6">
+        <button onClick={onOpenMonthPicker} className="flex flex-col items-start text-left">
           <div
-            className="text-[10px] uppercase tracking-[0.3em] mb-1 flex items-center gap-1.5"
-            style={{ fontFamily: FONTS.mono, color: t.faint }}
+            className="flex items-center gap-1.5 mb-2"
+            style={{ fontFamily: FONTS.serif, fontSize: '14px', color: t.muted }}
           >
             Month {String(viewMonth).padStart(2, '0')} · {viewProgram.name}
-            <ChevronDown size={11} style={{ color: t.faint }} />
+            <ChevronDown size={12} style={{ color: t.faint }} />
           </div>
           <h1
-            className="text-2xl"
-            style={{ fontFamily: FONTS.serif, fontWeight: 400, fontStyle: 'italic', color: t.ink }}
+            style={{
+              fontFamily: FONTS.serif,
+              fontSize: '46px',
+              fontWeight: 400,
+              color: t.ink,
+              lineHeight: 1,
+              letterSpacing: '-0.01em',
+            }}
           >
             Mobility
           </h1>
         </button>
-        <div className="flex items-center gap-4">
-          {streak > 0 && (
-            <div className="flex items-center gap-2">
-              <Flame size={14} style={{ color: t.accent }} fill="currentColor" />
-              <span className="text-sm tabular-nums" style={{ fontFamily: FONTS.mono, color: t.ink }}>
+
+        {streak > 0 && (
+          <div className="flex items-start gap-2 pt-2">
+            <Flame size={22} style={{ color: t.accent }} fill="currentColor" />
+            <div>
+              <div
+                style={{
+                  fontFamily: FONTS.serif,
+                  fontSize: '30px',
+                  lineHeight: 1,
+                  color: t.ink,
+                }}
+                className="tabular-nums"
+              >
                 {streak}
-              </span>
-              <span className="text-[10px] uppercase tracking-[0.2em]" style={{ fontFamily: FONTS.mono, color: t.faint }}>
-                day{streak !== 1 ? 's' : ''}
-              </span>
+              </div>
+              <div
+                style={{
+                  fontFamily: FONTS.sans,
+                  fontSize: '12px',
+                  color: t.muted,
+                  marginTop: 4,
+                }}
+              >
+                day streak
+              </div>
             </div>
-          )}
-          <button onClick={onOpenAccount} aria-label="Account" className="p-1 -mr-1" style={{ color: t.faint }}>
-            <User size={18} strokeWidth={1.5} />
-          </button>
-        </div>
+          </div>
+        )}
       </header>
 
-      {/* ADVANCEMENT BANNER */}
+      {/* DAY SELECTOR */}
+      <div className="pb-3 mb-2" style={{ borderBottom: `1px solid ${t.border}` }}>
+        <div className="flex justify-between items-center">
+          {DAY_SHORT.map((lbl, i) => {
+            const isActive = i === selectedDay;
+            const isCurrent = i === today;
+            return (
+              <button
+                key={lbl}
+                onClick={() => setSelectedDay(i)}
+                className="flex-1 flex flex-col items-center"
+              >
+                <div
+                  className="flex items-center justify-center transition-all"
+                  style={{
+                    width: 38,
+                    height: 38,
+                    borderRadius: '50%',
+                    background: isActive ? t.ink : 'transparent',
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: FONTS.mono,
+                      fontSize: '11px',
+                      letterSpacing: '0.1em',
+                      color: isActive ? t.bg : t.faint,
+                    }}
+                  >
+                    {lbl}
+                  </span>
+                </div>
+                {isCurrent && !isActive && (
+                  <div
+                    style={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: '50%',
+                      background: t.accent,
+                      marginTop: 4,
+                    }}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ADVANCE BANNER */}
       {canAdvance && (
         <div
-          className="mb-8 p-5 rounded-2xl animate-slideDown"
+          className="mt-6 p-5 rounded-2xl animate-slideDown"
           style={{ border: `1px solid ${t.accent}55`, background: t.accentSoft }}
         >
-          <div className="text-[10px] uppercase tracking-[0.3em] mb-2" style={{ fontFamily: FONTS.mono, color: t.accent }}>
+          <div
+            className="text-[10px] uppercase tracking-[0.3em] mb-2"
+            style={{ fontFamily: FONTS.mono, color: t.accent }}
+          >
             You've earned this
           </div>
           <div className="text-lg mb-1" style={{ fontFamily: FONTS.serif, fontWeight: 400, color: t.ink }}>
@@ -103,16 +168,27 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
           </div>
           <div className="flex gap-2">
             <button
-              onClick={() => ((currentMonth + 1 > 1 && !isPro) ? onPaywall() : advanceMonth())}
+              onClick={onAdvanceClick}
               className="flex items-center gap-2 px-4 py-2 rounded-full"
-              style={{ background: t.btnBg, color: t.btnText, fontFamily: FONTS.mono, fontSize: '10px', letterSpacing: '0.2em' }}
+              style={{
+                background: t.btnBg,
+                color: t.btnText,
+                fontFamily: FONTS.mono,
+                fontSize: '10px',
+                letterSpacing: '0.2em',
+              }}
             >
-              {(!isPro && currentMonth + 1 > 1) ? 'UNLOCK' : 'ADVANCE'} <ArrowRight size={12} />
+              {advanceLabel} <ArrowRight size={12} />
             </button>
             <button
               onClick={dismissAdvance}
               className="px-4 py-2 rounded-full"
-              style={{ color: t.muted, fontFamily: FONTS.mono, fontSize: '10px', letterSpacing: '0.2em' }}
+              style={{
+                color: t.muted,
+                fontFamily: FONTS.mono,
+                fontSize: '10px',
+                letterSpacing: '0.2em',
+              }}
             >
               NOT YET
             </button>
@@ -120,10 +196,10 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
         </div>
       )}
 
-      {/* VIEWING PREVIEW NOTICE */}
+      {/* PREVIEW NOTICE */}
       {!isViewingCurrentMonth && (
         <div
-          className="mb-6 px-4 py-3 rounded-xl flex items-center justify-between"
+          className="mt-6 px-4 py-3 rounded-xl flex items-center justify-between"
           style={{ background: t.card, border: `1px solid ${t.border}` }}
         >
           <div className="text-xs" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
@@ -139,139 +215,220 @@ export default function TodayScreen({ onOpenMonthPicker, onOpenAccount, onOpenDr
         </div>
       )}
 
-      {/* DAY SELECTOR */}
-      <div className="flex gap-1 mb-10 -mx-1">
-        {DAY_SHORT.map((lbl, i) => {
-          const isActive = i === selectedDay;
-          const isCurrent = i === today;
-          return (
-            <button
-              key={lbl}
-              onClick={() => setSelectedDay(i)}
-              className="flex-1 py-3 rounded-md transition-all relative"
-              style={{ background: isActive ? t.ink : 'transparent', color: isActive ? t.bg : t.faint }}
-            >
-              <div className="text-[10px] tracking-[0.15em]" style={{ fontFamily: FONTS.mono }}>
-                {lbl}
-              </div>
-              {isCurrent && !isActive && (
-                <div className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full" style={{ background: t.accent }} />
-              )}
-            </button>
-          );
-        })}
-      </div>
-
       {isRestDay ? (
         <RestScreen />
       ) : (
         <>
-          {/* DAY HEADING */}
-          <div className="mb-2">
-            {label(isToday && isViewingCurrentMonth ? 'Today' : DAY_LONG[selectedDay], { marginBottom: '0.5rem' })}
-            <h2 className="text-5xl leading-[0.95] mb-3" style={{ fontFamily: FONTS.serif, fontWeight: 300, color: t.ink }}>
+          {/* TODAY HEADING */}
+          <div className="mt-6 mb-6">
+            <div
+              style={{
+                fontFamily: FONTS.serif,
+                fontSize: '17px',
+                color: t.accent,
+              }}
+            >
+              {isToday && isViewingCurrentMonth ? 'Today' : DAY_LONG[selectedDay]}
+            </div>
+            <h2
+              style={{
+                fontFamily: FONTS.serif,
+                fontSize: '40px',
+                fontWeight: 400,
+                color: t.ink,
+                lineHeight: 1.05,
+                marginTop: 6,
+                letterSpacing: '-0.01em',
+              }}
+            >
               {session.title}
             </h2>
-            <p className="text-sm leading-relaxed" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
+            <p
+              style={{
+                fontFamily: FONTS.serif,
+                fontStyle: 'italic',
+                color: t.muted,
+                marginTop: 10,
+                fontSize: '14px',
+                lineHeight: 1.5,
+              }}
+            >
               {session.intro}
             </p>
           </div>
 
-          {/* PROGRESS METER */}
+          {/* PROGRESS */}
           {totalCount > 0 && isViewingCurrentMonth && (
-            <div className="mt-8 mb-10">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-[10px] uppercase tracking-[0.25em]" style={{ fontFamily: FONTS.mono, color: t.faint }}>
-                  Today's Progress
-                </span>
-                <span className="text-[10px] uppercase tracking-[0.25em] tabular-nums" style={{ fontFamily: FONTS.mono, color: t.muted }}>
-                  {totalDone} / {totalCount}
-                </span>
+            <div className="mb-6">
+              <div
+                style={{
+                  fontFamily: FONTS.mono,
+                  fontSize: '10px',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.25em',
+                  color: t.faint,
+                  marginBottom: 8,
+                }}
+              >
+                Today's Progress
               </div>
-              <div className="h-px relative overflow-hidden" style={{ background: t.border }}>
+              <div
+                style={{
+                  fontFamily: FONTS.sans,
+                  fontWeight: 500,
+                  fontSize: '22px',
+                  color: t.ink,
+                  marginBottom: 12,
+                }}
+                className="tabular-nums"
+              >
+                {totalDone} / {totalCount} Drills Completed
+              </div>
+              <div
+                style={{
+                  height: 6,
+                  background: t.border,
+                  borderRadius: 999,
+                  overflow: 'hidden',
+                }}
+              >
                 <div
-                  className="absolute inset-y-0 left-0 transition-all duration-500"
-                  style={{ width: `${(totalDone / totalCount) * 100}%`, background: t.accent, height: '2px', top: '-0.5px' }}
+                  style={{
+                    height: '100%',
+                    width: `${pct}%`,
+                    background: t.accent,
+                    borderRadius: 999,
+                    transition: 'width 0.5s',
+                  }}
                 />
               </div>
             </div>
           )}
 
-          {/* MORNING SECTION */}
-          <Section
-            t={t}
-            num="01"
-            title="Morning Routine"
-            intro={morning.intro}
-            done={morningDone}
-            count={morning.drills.length}
-            showCount={isViewingCurrentMonth}
-          >
-            {morning.drills.map((d, i) => (
-              <DrillCard
-                key={d.id}
-                drill={d}
-                index={i}
-                isComplete={isComplete(d.id)}
-                onOpen={() => onOpenDrill(d)}
-                onToggle={toggleComplete}
+          {/* SECTION CARDS */}
+          <div className="space-y-3">
+            {morning.drills.length > 0 && (
+              <SectionCard
+                t={t}
+                number="01"
+                title="Morning Routine"
+                subtitle={`${morning.drills.length} drills · Start your day right.`}
+                done={morningDone}
+                total={morning.drills.length}
+                showCount={isViewingCurrentMonth}
+                onClick={() =>
+                  onOpenSection({
+                    title: 'Morning Routine',
+                    intro: morning.intro,
+                    drills: morning.drills,
+                  })
+                }
               />
-            ))}
-          </Section>
+            )}
+            {session.drills.length > 0 && (
+              <SectionCard
+                t={t}
+                number="02"
+                title={session.title}
+                subtitle={`${session.drills.length} drills · Today's focus.`}
+                done={deepDone}
+                total={session.drills.length}
+                showCount={isViewingCurrentMonth}
+                onClick={() =>
+                  onOpenSection({
+                    title: session.title,
+                    intro: session.intro,
+                    drills: session.drills,
+                  })
+                }
+              />
+            )}
+          </div>
 
-          {/* DEEP SESSION */}
-          {session.drills.length > 0 && (
-            <Section
-              t={t}
-              num="02"
-              title={session.title}
-              done={deepDone}
-              count={session.drills.length}
-              showCount={isViewingCurrentMonth}
-              topMargin="mt-16"
-            >
-              {session.drills.map((d, i) => (
-                <DrillCard
-                  key={d.id}
-                  drill={d}
-                  index={i}
-                  isComplete={isComplete(d.id)}
-                  onOpen={() => onOpenDrill(d)}
-                  onToggle={toggleComplete}
-                />
-              ))}
-            </Section>
-          )}
+          <MountainBackdrop t={t} />
         </>
       )}
     </div>
   );
 }
 
-function Section({ t, num, title, intro, done, count, showCount, topMargin = 'mt-12', children }) {
+function SectionCard({ t, number, title, subtitle, done, total, showCount, onClick }) {
   return (
-    <section className={topMargin}>
-      <div className="flex items-baseline justify-between mb-1 pb-3" style={{ borderBottom: `1px solid ${t.borderStrong}` }}>
-        <div>
-          <div className="text-[10px] uppercase tracking-[0.3em] mb-1" style={{ fontFamily: FONTS.mono, color: t.faint }}>
-            {num}
-          </div>
-          <h3 className="text-2xl" style={{ fontFamily: FONTS.serif, fontWeight: 400, color: t.ink }}>
-            {title}
-          </h3>
-        </div>
-        {showCount && (
-          <div className="text-[10px] uppercase tracking-[0.2em] tabular-nums" style={{ fontFamily: FONTS.mono, color: t.faint }}>
-            {done}/{count}
-          </div>
-        )}
+    <button
+      onClick={onClick}
+      className="w-full p-4 rounded-2xl flex items-center gap-4 text-left transition-all"
+      style={{ background: t.card, border: `1px solid ${t.border}` }}
+    >
+      <div className="flex items-center" style={{ gap: 10 }}>
+        <div style={{ width: 3, height: 32, background: t.accent, borderRadius: 2 }} />
+        <span
+          className="tabular-nums"
+          style={{ fontFamily: FONTS.mono, color: t.accent, fontSize: '13px' }}
+        >
+          {number}
+        </span>
       </div>
-      {intro && (
-        <p className="mt-3 mb-2 text-xs leading-relaxed pl-1" style={{ fontFamily: FONTS.serif, fontStyle: 'italic', color: t.muted }}>
-          {intro}
-        </p>
+      <div className="flex-1 min-w-0">
+        <div
+          style={{
+            fontFamily: FONTS.sans,
+            fontWeight: 600,
+            fontSize: '16px',
+            color: t.ink,
+          }}
+        >
+          {title}
+        </div>
+        <div
+          style={{
+            fontFamily: FONTS.sans,
+            fontSize: '13px',
+            color: t.muted,
+            marginTop: 2,
+          }}
+        >
+          {subtitle}
+        </div>
+      </div>
+      {showCount && (
+        <div
+          className="tabular-nums"
+          style={{
+            fontFamily: FONTS.sans,
+            fontWeight: 600,
+            fontSize: '17px',
+            color: t.ink,
+          }}
+        >
+          {done} / {total}
+        </div>
       )}
-      <div>{children}</div>
-    </section>
+    </button>
+  );
+}
+
+function MountainBackdrop({ t }) {
+  return (
+    <div
+      className="mt-12 -mx-6"
+      style={{ height: 120, overflow: 'hidden', pointerEvents: 'none' }}
+      aria-hidden
+    >
+      <svg
+        viewBox="0 0 400 200"
+        preserveAspectRatio="xMidYMax slice"
+        style={{ width: '100%', height: '100%', opacity: 0.32 }}
+      >
+        <path
+          d="M0,200 L0,140 L40,108 L80,128 L120,86 L160,118 L200,76 L240,108 L280,86 L320,118 L360,98 L400,128 L400,200 Z"
+          fill={t.dark ? '#3a3530' : '#a8a29e'}
+        />
+        <path
+          d="M0,200 L0,170 L60,150 L100,162 L150,134 L200,150 L260,128 L320,150 L400,140 L400,200 Z"
+          fill={t.dark ? '#26221f' : '#78716c'}
+          opacity="0.7"
+        />
+      </svg>
+    </div>
   );
 }
