@@ -157,3 +157,12 @@ export async function logout() {
   // Leave the device on a clean slate so the next user starts fresh.
   await clearProgressLocal();
 }
+
+// Permanently delete the signed-in user's account and all server-side data,
+// then sign out and clear local progress.
+export async function deleteAccount() {
+  const token = await getToken();
+  if (!token) throw new Error('Not signed in');
+  await api.deleteAccount(token);
+  await logout();
+}

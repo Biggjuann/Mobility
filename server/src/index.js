@@ -195,6 +195,19 @@ app.put(
   }),
 );
 
+// Full account deletion (required by App Store Guideline 5.1.1(v) for any
+// app that supports account creation). The user_state row is removed via
+// the ON DELETE CASCADE foreign key.
+app.delete(
+  '/api/account',
+  apiLimiter,
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    await query('DELETE FROM users WHERE id = $1', [req.userId]);
+    return res.json({ ok: true });
+  }),
+);
+
 // ── Error handling ─────────────────────────────────────────────────────────
 // eslint-disable-next-line no-unused-vars
 app.use((err, _req, res, _next) => {

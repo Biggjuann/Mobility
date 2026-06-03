@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { X } from 'lucide-react';
 import { useTheme, FONTS } from './theme';
-import { register, login, logout, getEmail } from './lib/sync';
+import { register, login, logout, getEmail, deleteAccount } from './lib/sync';
 
 // Minimum password length must match the server's policy.
 const MIN_PASSWORD = 8;
@@ -14,6 +14,7 @@ export default function AccountModal({ onClose }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [currentEmail, setCurrentEmail] = useState(null);
+  const [confirmDelete, setConfirmDelete] = useState(false);
 
   useEffect(() => {
     getEmail().then(setCurrentEmail);
@@ -45,6 +46,18 @@ export default function AccountModal({ onClose }) {
   const doLogout = async () => {
     await logout();
     window.location.reload();
+  };
+
+  const doDelete = async () => {
+    setError('');
+    setBusy(true);
+    try {
+      await deleteAccount();
+      window.location.reload();
+    } catch (err) {
+      setError(err?.message || 'Could not delete account. Please try again.');
+      setBusy(false);
+    }
   };
 
   const labelStyle = { fontFamily: FONTS.mono, fontSize: '10px', letterSpacing: '0.2em' };
@@ -96,6 +109,51 @@ export default function AccountModal({ onClose }) {
             >
               Sign out
             </button>
+
+            <div className="pt-4" style={{ borderTop: `1px solid ${t.border}` }}>
+              {!confirmDelete ? (
+                <button
+                  onClick={() => setConfirmDelete(true)}
+                  className="w-full py-3 rounded-full uppercase"
+                  style={{ ...labelStyle, color: t.accent }}
+                >
+                  Delete account
+                </button>
+              ) : (
+                <div className="space-y-3">
+                  <p
+                    className="text-sm leading-relaxed"
+                    style={{ fontFamily: FONTS.serif, color: t.ink }}
+                  >
+                    This permanently deletes your account and all server‑side
+                    progress. Subscriptions are managed by Apple and aren't
+                    canceled by this — cancel those in your App Store account
+                    settings. This can't be undone.
+                  </p>
+                  {error && (
+                    <div className="text-sm" style={{ fontFamily: FONTS.sans, color: t.accent }}>
+                      {error}
+                    </div>
+                  )}
+                  <button
+                    onClick={doDelete}
+                    disabled={busy}
+                    className="w-full py-3 rounded-full uppercase disabled:opacity-50"
+                    style={{ ...labelStyle, background: t.accent, color: '#fff' }}
+                  >
+                    {busy ? 'Deleting…' : 'Yes, delete my account'}
+                  </button>
+                  <button
+                    onClick={() => setConfirmDelete(false)}
+                    disabled={busy}
+                    className="w-full py-3 rounded-full uppercase"
+                    style={{ ...labelStyle, color: t.muted }}
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <form onSubmit={submit} className="space-y-4">

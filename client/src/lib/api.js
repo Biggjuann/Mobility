@@ -34,4 +34,5 @@ export const api = {
   getState: (token) => req('/api/state', { token }),
   putState: (token, state) =>
     req('/api/state', { method: 'PUT', token, body: { state } }),
+  deleteAccount: (token) => req('/api/account', { method: 'DELETE', token }),
 };
