@@ -47,6 +47,15 @@ workflows:
           sed -i '' 's|TARGETED_DEVICE_FAMILY = "1,2";|TARGETED_DEVICE_FAMILY = "1";|g' \
             client/ios/App/App.xcodeproj/project.pbxproj
           grep -n 'TARGETED_DEVICE_FAMILY' client/ios/App/App.xcodeproj/project.pbxproj | head -4
+      - name: Generate app icon set
+        script: |
+          # Replace Capacitor's placeholder icon with the real one in
+          # client/resources/icon.png. The generator writes the full iOS icon
+          # set into ios/App/App/Assets.xcassets/AppIcon.appiconset/.
+          cd client
+          npx capacitor-assets generate --ios \
+            --iconBackgroundColor '#14110d' \
+            --iconBackgroundColorDark '#14110d'
       - name: Resolve Swift Package dependencies
         script: |
           xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" \
