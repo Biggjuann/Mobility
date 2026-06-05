@@ -86,9 +86,24 @@ export default function SettingsScreen({ onChangeMonth, onOpenAccount, onPaywall
         t={t}
         icon={<Sparkles {...ICON} />}
         label={isPro ? 'Mobility Pro' : 'Go Pro — unlock all months'}
-        value={isPro ? 'Active' : undefined}
-        onClick={isPro ? undefined : onPaywall}
-        right={isPro ? null : <ChevronRight size={16} style={{ color: t.faint }} />}
+        value={isPro ? 'Manage' : undefined}
+        onClick={
+          isPro
+            ? () =>
+                window.open(
+                  'https://apps.apple.com/account/subscriptions',
+                  '_blank',
+                  'noopener,noreferrer',
+                )
+            : onPaywall
+        }
+        right={
+          isPro ? (
+            <ExternalLink size={14} style={{ color: t.faint }} />
+          ) : (
+            <ChevronRight size={16} style={{ color: t.faint }} />
+          )
+        }
       />
 
       {!isPro && (
