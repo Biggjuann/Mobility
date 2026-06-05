@@ -113,6 +113,18 @@ app.get('/privacy', (_req, res) => res.type('html').send(PRIVACY_HTML));
 app.get('/terms', (_req, res) => res.type('html').send(TERMS_HTML));
 app.get('/support', (_req, res) => res.type('html').send(SUPPORT_HTML));
 
+// Drill illustrations and other static assets. Layout follows
+// /assets/drills/<drill-id>/{hero,phase-*,avoid}.png — drop PNGs and they
+// appear in the app without a code change.
+app.use(
+  '/assets',
+  express.static(path.join(__dirname, '../assets'), {
+    maxAge: '30d',
+    fallthrough: true,
+    index: false,
+  }),
+);
+
 app.post(
   '/api/auth/register',
   authLimiter,
