@@ -1,0 +1,77 @@
+Group,Drill,FirstID,AssetDir,FirstMonth,Spec,HasTimer,Cues,Avoid
+Quadruped,Cat-Cows,m1-catcow,cat-cows,1,2 × 10,no,"Hands under shoulders, knees under hips · Exhale: round up, tuck chin · Inhale: drop belly, lift chest",Just moving your head — the whole spine moves.
+Quadruped,Thread the Needle,m1-tue-thr,thread-the-needle,1,3 × 5 each,no,On hands and knees · Slide right arm under left · Lower shoulder and ear toward floor,Dumping into shoulder.
+Quadruped,Bird Dog,m4-wed-bd,bird-dog,4,3 × 8 each,no,"Hands and knees · Extend opposite arm and leg · Square hips, hold 2 sec",Hip rotating up.
+Supine,Glute Bridge,m1-wed-gb,glute-bridge,1,3 × 12,no,"Push floor away, lift hips · Squeeze glutes hard at top · Tuck tailbone slightly",Feeling it in the lower back.
+Supine,Knee Circles,m1-knee,knee-circles,1,10 each way,no,"Lie on back, knees over chest · Hands rest on knees · Small, slow circles",Forcing range. Keep circles small.
+Supine,Pelvic Tilt + March,m1-wed-pm,pelvic-tilt-march,1,3 × 10,no,"Press lower back to floor · Hold tilt — lift one knee, lower · Reset tilt if back arches",Back arching off floor.
+Supine,Reclining Figure-4,m1-sat-f4,reclining-figure-4,1,60s each,yes,Right ankle over left knee · Pull left thigh to chest,Lifting head/shoulders.
+Supine,Supine Hamstring,m1-sat-h,supine-hamstring,1,60s each,yes,"Towel around foot · Leg up, pull foot toward you",Locking knee hard.
+Supine,Supine Twist,m1-fri-tw,supine-twist,1,30s each,yes,"Knees bent, drop to one side",Lifting shoulders off floor.
+Supine,Dead Bug,m2-wed-db,dead-bug,2,3 × 8 each,no,"On back, arms up, knees over hips · Press low back to floor · Extend opposite arm and leg slowly",Letting back arch.
+Supine,Knee Drops,m2-knee,knee-drops,2,10 each side,no,"On back, knees bent, feet flat · Drop both knees to one side · Slow return, opposite side",Letting shoulders lift.
+Supine,Knee Drops + Hold,m3-knee,knee-drops-hold,3,"10 each, 5s hold",no,Drop knees to side · Hold 5 sec at end range · Slow return,Bouncing back.
+Supine,Single-Leg Glute Bridge,m3-wed-sl,single-leg-glute-bridge,3,3 × 10 each,no,"One foot up, lift hips with the other · Squeeze hard at top",Hips dropping unevenly.
+Supine,Banded Glute Bridge,m4-wed-gb,banded-glute-bridge,4,3 × 15,no,"Band above knees, push out · Lift hips, squeeze",Knees caving against band.
+Supine,Loaded Dead Bug,m5-wed-db,loaded-dead-bug,5,3 × 10 each,no,Hold light DBs · Press back to floor · Slow extension,Back arching.
+Supine,Loaded Thoracic Extension,m5-tue-lte,loaded-thoracic-extension,5,3 × 8,no,Light DB held overhead · Lie back over roller · Open chest,Lower back arching.
+Supine,Thoracic Ext over Roller,m6-wed-te,thoracic-ext-over-roller,6,3 × 10,no,"Roller under upper back · Ribs tucked, open chest",Lower back arching.
+Prone,Cobra,m2-tue-cb,cobra,2,3 × 30s,yes,"On stomach, hands under shoulders · Press up only as far as comfortable · Hips stay on floor",Pushing into low back pain.
+Child's Pose,Child's Pose,m1-fri-ch,childs-pose,1,30 sec,yes,"Kneel, hips to heels, arms forward",Knee pressure.
+Child's Pose,Child's Pose w/ Reach,m1-tue-ch,childs-pose-w-reach,1,3 × 30s,yes,"Kneel, hips to heels, arms forward · Walk hands right 10s · Center 10s, left 10s",Knee pressure — pad if sore.
+Child's Pose,Loaded Child's Pose,m4-tue-lcp,loaded-childs-pose,4,3 × 30s,yes,Hold light DB in extended hands · Sink into the stretch,Knee pain — pad it.
+Seated,Butterfly,m1-sat-bf,butterfly,1,60s × 2,yes,"Soles together, knees wide · Sit tall, lean from hips",Pushing knees down.
+Seated,Seated Figure-4,m1-fig4,seated-figure-4,1,30 sec each,yes,"Sit in chair, ankle on opposite knee · Lean chest forward gently · Keep back long",Rounding to reach further.
+Seated,Seated Forward Fold,m1-fri-fw,seated-forward-fold,1,30 sec,yes,"Soft knees, hinge from hips",Forcing toes.
+Seated,Seated Thoracic Rotation,m1-wed-tr,seated-thoracic-rotation,1,3 × 10 each,no,Arms crossed over chest · Rotate upper body slowly · Hips face forward,Twisting from lower back.
+Seated,90/90 Hip Switches,m2-mon-9090,90-90-hip-switches,2,8 reps,no,"Sit, front leg 90° in front, back leg 90° to side · Rotate legs to opposite side · Chest tall, knees heavy",Leaning back to swing legs.
+Seated,Pigeon Prep,m2-sat-pp,pigeon-prep,2,60s each,yes,"On floor, one leg in figure-4 in front · Lean chest forward gently · Cushion under hip if needed",Hip lifting up.
+Seated,Seated Rotation,m2-wed-tr,seated-rotation,2,3 × 12 each,no,Cross arms over chest · Rotate further this month · Hips face forward,Twisting from low back.
+Seated,90/90 Hip Rotations,m3-9090,90-90-hip-rotations,3,8 each side,no,Full rotation both directions · Chest tall the whole time · Back knee heavy,Swinging with momentum.
+Seated,Pigeon Stretch,m3-mon-pg,pigeon-stretch,3,60s each,yes,Front shin angled across mat · Back leg extended · Cushion under hip if needed,Hips uneven.
+Seated,Seated Rotation + Reach,m3-wed-tr,seated-rotation-reach,3,3 × 10 each,no,"Cross arms, rotate · Reach far hand toward opposite knee",Twisting from low back.
+Seated,Pancake Hold,m4-sat-pc,pancake-hold,4,60s × 2,yes,"Legs wide, toes up · Hinge forward, long spine · Chest leads, not head",Rounding to reach lower.
+Seated,Pigeon,m4-sat-pg,pigeon,4,90s each,yes,Cushion under hip if needed,Hip uneven.
+Seated,Pigeon Good Morning,m4-pg,pigeon-good-morning,4,6 each,no,"Pigeon position, hipbones forward · Hinge at hips toward shin · Long spine",Rounding the back.
+Seated,Loaded Pancake,m5-sat-pc,loaded-pancake,5,45s × 2,yes,"Light DB at chest · Hinge from hips, long spine",Rounding back.
+Seated,Loaded Pike,m5-sat-pk,loaded-pike,5,45s × 2,yes,Light DB at chest · Hinge toward toes,Rounding back.
+Seated,Pigeon Good Mornings,m6-pg,pigeon-good-mornings,6,8 each,no,"Long spine, hinge from hips",Rounding.
+Seated,Straddle Holds,m6-sat-st,straddle-holds,6,30s each,yes,"Legs in V, hold over left, center, right",Forcing past tolerance.
+Half-Kneeling,Half-Kneeling Hip Flexor,m1-hf,half-kneeling-hip-flexor,1,30 sec each,yes,"Towel under back knee if needed · Tuck tailbone, squeeze back glute · Stay tall",Arching the lower back.
+Half-Kneeling,Half-Kneeling Hip Flexor + Reach,m2-hf,half-kneeling-hip-flexor-reach,2,40 sec each,yes,"Tuck, squeeze glute, then · Raise same-side arm overhead · Slight side-bend away",Arching back to reach.
+Half-Kneeling,Couch Stretch,m3-couch1,couch-stretch,3,40s each,yes,"Lunge position · Back foot flat on floor (not wall yet) · Tuck tailbone, squeeze glute",Arching the lower back.
+Half-Kneeling,Half-Kneeling Couch Stretch,m3-sat-cs,half-kneeling-couch-stretch,3,60s each,yes,"Lunge, back foot up against wall or couch · Tuck tailbone, squeeze glute",Arching back.
+Half-Kneeling,Half-Kneeling Hip Flexor + Rotation,m5-hfr,half-kneeling-hip-flexor-rotation,5,30s each,yes,"Tuck, squeeze, then rotate toward front leg · Open chest",Lower back pinch.
+Standing,Lateral Lunge,m1-fri-ll,lateral-lunge,1,5 each,no,"Hold chair, step wide",Past easy depth.
+Standing,Reverse Lunge,m1-mon-rl,reverse-lunge,1,3 × 6 each,no,"Hold chair, one hand · Step foot back into lunge · Step up. Switch.",Front knee caving inward.
+Standing,Squat to Chair,m1-mon-sq,squat-to-chair,1,3 × 10,no,"Stand in front of chair · Push hips back, tap chair · Stand up",Crashing onto the chair.
+Standing,Standing Hamstring,m1-mon-ham,standing-hamstring,1,3 × 30s each,yes,Heel on low step · Hinge forward from hips · Keep back long,Rounding back to reach.
+Standing,Standing Quad,m1-mon-quad,standing-quad,1,3 × 30s each,yes,"Hold wall, grab ankle · Pull heel toward butt · Tuck tailbone",Knee flaring out.
+Standing,Supported Lateral Lunge,m1-lat,supported-lateral-lunge,1,5 each,no,"Hold chair/counter for balance · Step foot out wide, sit toward that side · Other leg straight, foot flat",Going lower than feels easy.
+Standing,Bodyweight Squat,m2-mon-sq,bodyweight-squat,2,3 × 10,no,"No chair this month · Sit back, knees out · As deep as comfortable",Knees caving inward.
+Standing,Deep Squat Hold,m2-fri-ds,deep-squat-hold,2,20 sec,yes,"Heels flat, chest tall · Hold a pole if needed",Forcing depth.
+Standing,Cossack Shift,m3-cossack,cossack-shift,3,10 reps,no,Feet 2× shoulder width · Shift fully one side · Other foot stays flat,Heel popping up.
+Standing,Cossack Squat,m3-mon-cs,cossack-squat,3,3 × 8 each,no,"Wide stance · Sit fully into one side, stay heels flat · Other leg straight",Rushing the transition.
+Standing,Walking Lunge,m3-mon-wl,walking-lunge,3,3 × 10 each,no,"Step forward, lower · Drive through heel up · Alternate legs",Front knee inward.
+Standing,Banded Pull-Aparts,m4-tue-bpa,banded-pull-aparts,4,3 × 12,no,"Light band, arms straight · Pull band apart at chest height · Squeeze blades together",Bending elbows.
+Standing,Banded Shoulder Dislocates,m4-tue-bsd,banded-shoulder-dislocates,4,3 × 10,no,"Wide band grip, arms straight · Front to behind butt",Bending elbows.
+Standing,Goblet Squat,m4-mon-gs,goblet-squat,4,3 × 8,no,Hold DB at chest · Sit back and down · Drive through heels,Knees caving.
+Standing,Jefferson Curl,m4-wed-jc,jefferson-curl,4,3 × 5,no,"Stand on box, very light DB · Roll down vertebra by vertebra · Roll back up segment by segment",Using too much weight. 5 lb is plenty.
+Standing,Shoulder Dislocates,m4-fri-sd,shoulder-dislocates,4,10,no,"Wide grip, arms straight",Bending elbows.
+Standing,ATG Split Squat,m5-mon-atg,atg-split-squat,5,3 × 6 each,no,"Long lunge, front knee tracks far over toes · Heel stays flat · Build depth over weeks","Heel lifting. Sit deeper, not further."
+Standing,Loaded Shoulder Dislocates,m5-tue-lsd,loaded-shoulder-dislocates,5,3 × 10,no,"Light bar or weighted band · Slow, arms straight",Speed.
+Standing,Weighted Cossack Squat,m5-mon-wcs,weighted-cossack-squat,5,3 × 6 each,no,"Goblet hold light DB · Sit fully one side, heels flat · Pause 1 sec",Weight pulling forward.
+Wall,Doorway Chest Stretch,m1-tue-dw,doorway-chest-stretch,1,3 × 30s each,yes,"Forearm on doorframe, shoulder height · Step opposite foot forward · Rotate body away gently",Forcing into a pinch.
+Wall,Wall Scapular Slides,m1-tue-ws,wall-scapular-slides,1,3 × 10,no,"Slow, controlled · Drive blades DOWN at bottom · Wall contact whole time",Shrugging at the top.
+Wall,Wall Slides,m1-ws,wall-slides,1,10 reps,no,"Back to wall, arms goal-post · Slide up overhead · Only as high as you can without arching",Lower back peeling off wall.
+Wall,Banded Wall Slides,m4-bws,banded-wall-slides,4,12 reps,no,Resistance band around wrists · Pull outward against band · Slide up overhead,Letting band slacken.
+Hanging,Dead Hang,m3-tue-dh,dead-hang,3,3 × 15s,yes,"Hang from a pull-up bar · Arms straight, relax · Build up time gradually",Grip failing — drop down.
+Hanging,Scapula Pull-Ups,m5-tue-sp,scapula-pull-ups,5,3 × 8,no,"Dead hang, arms straight · Pull blades down and back · Body rises an inch",Bending elbows.
+Hanging,German Hang,m6-tue-gh,german-hang,6,3 × 30s,yes,"Invert through, lower feet behind · Hold the passive stretch · Build gradually",Pushing past pinch.
+Hanging,Skin-the-Cats,m6-tue-stc,skin-the-cats,6,3 × 5,no,"Hang, tuck knees, invert through · Lower toes behind, return through",Going too fast — control both directions.
+CARs,Neck Circles,m1-neck,neck-circles,1,5 each way,no,"Sit/stand tall, shoulders relaxed · Slow chin circle · Feel every degree",Fast or jerky movement.
+CARs,Neck + Shoulder CARs,m2-cars,neck-shoulder-cars,2,5 each joint,no,"Neck circle 5 each way · Then shoulder rolls 5 each way · Smooth, controlled",Speeding up.
+CARs,Full Joint CARs,m3-cars,full-joint-cars,3,5 each,no,"Neck, shoulders, hips, ankles · 5 each direction",Skipping joints.
+CARs,Full Body CARs,m5-cars,full-body-cars,5,5 each,no,"Hit every joint · Slow, end range",Rushing.
+CARs,Neck CARs,m6-neck,neck-cars,6,5 each,no,Slow chin circle,Speed.
+Inverted,Downward Dog,m3-fri-dd,downward-dog,3,30 sec,yes,Push hips up and back · Bend knees if hamstrings tight · Heels reach toward floor,Forcing straight legs.
