@@ -23,6 +23,10 @@ workflows:
       vars:
         BUNDLE_ID: 'com.jungbrothers.mobility'
         XCODE_PROJECT: 'client/ios/App/App.xcodeproj'
+        # Marketing version (CFBundleShortVersionString). App Store Connect
+        # closes a version's train once it's approved/rejected, so bump this
+        # for every new App Store release (e.g. 1.0.1, 1.1, 2.0).
+        MARKETING_VERSION: '1.0.1'
         XCODE_SCHEME: 'App'
       node: 22
       xcode: latest
@@ -60,9 +64,17 @@ workflows:
         script: |
           xcodebuild -project "$XCODE_PROJECT" -scheme "$XCODE_SCHEME" \
             -resolvePackageDependencies
+      - name: Set marketing version
+        script: |
+          # CFBundleShortVersionString — bump in env vars above when you start
+          # a new App Store version. App Store Connect rejects re-uploads on a
+          # closed version "train".
+          cd client/ios/App
+          agvtool new-marketing-version "$MARKETING_VERSION"
       - name: Set build number
         script: |
-          # TestFlight requires a unique, increasing build number per upload.
+          # CFBundleVersion — must be unique + increasing per upload. Uses
+          # Codemagic's auto-incrementing build counter.
           cd client/ios/App
           agvtool new-version -all "${BUILD_NUMBER:-1}"
       - name: Set up code signing
