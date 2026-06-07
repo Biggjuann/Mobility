@@ -39,11 +39,13 @@ const SIZE = args.size || '1536x1024';
 const MODEL = 'gpt-image-1';
 
 // Detailed shared style preamble. Repeated in every prompt to keep the
-// character, framing, lighting, and background consistent.
+// character, framing, lighting, and background consistent. NOTE: the model
+// wears a fitted t-shirt — describing him as "bare-chested" combined with
+// supine ("lying on back") poses reliably trips OpenAI's safety filter.
 const STYLE = [
   'Clean, photorealistic anatomical fitness illustration for a mobility app.',
   'Subject: a single athletic male model in his early thirties, lean build, short dark hair,',
-  'wearing dark grey athletic shorts, bare-chested.',
+  'wearing a fitted dark grey athletic t-shirt and dark grey athletic shorts. Fully clothed.',
   'Setting: isolated against a warm matte near-black background (hex #14110d).',
   'No floor markings, no environment, no shadows on the ground, no props',
   'except those explicitly required by the movement.',
