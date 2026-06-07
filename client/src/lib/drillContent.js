@@ -1,23 +1,41 @@
-// Rich, page-driven content per drill, keyed by the drill id from program.js.
+// Rich, page-driven content for drills, looked up by drill id from program.js.
 //
-// When a drill appears here, DrillDetail renders the rich layout: description,
-// phase breakdown (with breath + image + per-phase cues), checked coaching
-// cues, an Avoid block with optional sub-image, and a closing tip. Drills
-// without an entry render the simple cues + avoid layout we ship today.
+// Architecture:
+//   • Each drill name maps to an asset slug (cat-cows, bird-dog, etc.).
+//   • Multiple drill ids share a slug across months (m1-catcow, m2-catcow,
+//     m3-catcow → cat-cows), so one image set covers every variant.
+//   • BY_SLUG holds optional rich content (description, phases, tip,
+//     avoidImage). Most drills only need a hero image, which the default
+//     branch of richContent() provides automatically.
 //
-// Image paths are relative to /assets/drills/ on the Railway server, served
-// statically. Drop matching PNGs at /server/assets/drills/<dir>/ and they
-// surface in the app on the next deploy — no code change needed.
-//
-// Naming convention (matches /server/assets/drills/cat-cows as the template):
-//   hero.png            — top illustration
-//   phase-<id>.png      — per-phase illustration (id matches phase.id)
-//   avoid.png           — optional "what not to do" illustration
+// Assets live at /assets/drills/<slug>/{hero,phase-*,avoid}.png on the
+// Railway server; the SafeImage helper in DrillDetail hides anything that
+// 404s so we never paint an empty image card.
 
-export const DRILL_CONTENT = {
-  'm1-catcow': {
+import { PROGRAMS } from './program';
+
+const slugify = (s) =>
+  s.toLowerCase().replace(/['"]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-+$/g, '');
+const canonical = (n) => n.replace(/\s*\([^)]+\)\s*/g, '').trim();
+
+// drill id → asset slug. Built once at module load from PROGRAMS so adding
+// new drills there automatically wires them up.
+const SLUG_BY_ID = (() => {
+  const out = {};
+  for (const prog of Object.values(PROGRAMS)) {
+    for (const d of prog.morning.drills) out[d.id] = slugify(canonical(d.name));
+    for (const day of Object.values(prog.days || {})) {
+      for (const d of day.drills || []) out[d.id] = slugify(canonical(d.name));
+    }
+  }
+  return out;
+})();
+
+// Optional per-slug extras. Add description / phases / tip / avoidImage here
+// to upgrade a drill from the basic image+cues layout to the full breakdown.
+export const BY_SLUG = {
+  'cat-cows': {
     description: 'A gentle flow to mobilize your spine and sync movement with breath.',
-    heroImage: 'cat-cows/hero.png',
     phases: [
       {
         id: 'cow',
@@ -34,20 +52,21 @@ export const DRILL_CONTENT = {
         cues: ['Round up', 'Press the floor away', 'Tuck chin to chest'],
       },
     ],
-    cues: [
-      'Hands under shoulders, knees under hips',
-      'Move with your breath',
-      'Slow, controlled, and smooth',
-      'Keep the movement in your spine',
-    ],
-    avoid: 'Just moving your head — the whole spine moves.',
-    avoidImage: 'cat-cows/avoid.png',
     tip: 'Move slowly and focus on how each part of your spine moves.',
+    avoidImage: 'cat-cows/avoid.png',
   },
 };
 
-export const richContent = (drillId) => DRILL_CONTENT[drillId] || null;
+export function richContent(drillId) {
+  const slug = SLUG_BY_ID[drillId];
+  if (!slug) return null;
+  return {
+    heroImage: `${slug}/hero.png`,
+    ...(BY_SLUG[slug] || {}),
+  };
+}
 
 // Resolve a drill asset path to a full URL on the Railway-hosted CDN.
 const BASE = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
-export const drillAsset = (path) => (path && BASE ? `${BASE}/assets/drills/${path}` : null);
+export const drillAsset = (path) =>
+  path && BASE ? `${BASE}/assets/drills/${path}` : null;

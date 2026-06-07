@@ -1,21 +1,22 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ArrowLeft, ArrowUp, ArrowDown, Check, Circle, Play, XCircle, Lightbulb } from 'lucide-react';
 import { useTheme, FONTS } from '../theme';
 import { richContent, drillAsset } from '../lib/drillContent';
 
-// Hides its image on load error so missing assets degrade silently.
-function SafeImage({ src, alt, style, className }) {
-  if (!src) return null;
+// Image card that disappears entirely if the source fails to load — so
+// drills without an uploaded illustration don't paint an empty box.
+function MediaCard({ src, alt, t, className = '' }) {
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return null;
   return (
-    <img
-      src={src}
-      alt={alt}
-      className={className}
-      style={style}
-      onError={(e) => {
-        e.currentTarget.style.display = 'none';
-      }}
-    />
+    <div className={`rounded-2xl overflow-hidden ${className}`} style={{ background: t.card }}>
+      <img
+        src={src}
+        alt={alt}
+        className="w-full block"
+        onError={() => setFailed(true)}
+      />
+    </div>
   );
 }
 
@@ -74,9 +75,12 @@ export default function DrillDetail({ drill, isComplete, onToggle, onClose, onSt
 
         {/* Hero image (rich only) */}
         {rich?.heroImage && (
-          <div className="mb-10 rounded-2xl overflow-hidden" style={{ background: t.card }}>
-            <SafeImage src={drillAsset(rich.heroImage)} alt={drill.name} className="w-full" />
-          </div>
+          <MediaCard
+            t={t}
+            src={drillAsset(rich.heroImage)}
+            alt={drill.name}
+            className="mb-10"
+          />
         )}
 
         {/* Phase breakdown (rich only) */}
@@ -141,10 +145,11 @@ export default function DrillDetail({ drill, isComplete, onToggle, onClose, onSt
               {avoid}
             </div>
             {rich?.avoidImage && (
-              <SafeImage
+              <MediaCard
+                t={t}
                 src={drillAsset(rich.avoidImage)}
                 alt="What to avoid"
-                className="w-full mt-4 rounded-xl"
+                className="mt-4"
               />
             )}
           </div>
@@ -219,9 +224,7 @@ function PhaseBlock({ t, index, phase }) {
         </div>
       )}
       {phase.image && (
-        <div className="rounded-2xl overflow-hidden mb-4" style={{ background: t.card }}>
-          <SafeImage src={drillAsset(phase.image)} alt={phase.label} className="w-full" />
-        </div>
+        <MediaCard t={t} src={drillAsset(phase.image)} alt={phase.label} className="mb-4" />
       )}
       {phase.cues?.length > 0 && (
         <ul className="space-y-2">
