@@ -55,6 +55,10 @@ const STYLE = [
   'NO text, NO labels, NO UI, NO arrows, NO numbers, NO logos, NO watermarks.',
   'Composition: full body in frame, side-profile or 3/4 view, hip-height camera,',
   'subject centred with comfortable margin.',
+  'Framing is critical: ALL limbs, hands, fingers, feet, toes, and head must be',
+  'fully visible inside the frame — NEVER cropped at any edge. If any limb is',
+  'extended (arm or leg reaching outward), zoom out far enough that the entire',
+  'limb stays inside the frame, with at least 10% empty padding on every side.',
 ].join(' ');
 
 const POSITION_HINT = {
