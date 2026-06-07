@@ -36,7 +36,7 @@ if (!fs.existsSync(CSV)) die(`Missing ${CSV}. Run the docs generator first.`);
 
 const QUALITY = args.quality || 'medium';
 const SIZE = args.size || '1536x1024';
-const MODEL = 'gpt-image-1';
+const MODEL = args.model || 'gpt-image-1';
 
 // Detailed shared style preamble. Repeated in every prompt to keep the
 // character, framing, lighting, and background consistent.
@@ -231,6 +231,7 @@ function parseArgs(argv) {
     switch (a) {
       case '--only': out.only = next; i++; break;
       case '--drill': out.drill = next; i++; break;
+      case '--model': out.model = next; i++; break;
       case '--quality': out.quality = next; i++; break;
       case '--size': out.size = next; i++; break;
       case '--reference': out.reference = next; i++; break;
