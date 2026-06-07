@@ -38,6 +38,11 @@ const QUALITY = args.quality || 'medium';
 const SIZE = args.size || '1536x1024';
 const MODEL = args.model || 'gpt-image-1';
 
+// Only gpt-image-1 currently accepts the transparent-background flag. Newer
+// models like gpt-image-2 return HTTP 400 for `background=transparent`, so
+// we send those params only when we know the model supports them.
+const SUPPORTS_TRANSPARENT = MODEL === 'gpt-image-1';
+
 // Detailed shared style preamble. Repeated in every prompt to keep the
 // character, framing, lighting, and background consistent.
 //
@@ -53,9 +58,11 @@ const STYLE = [
   'Subject: a single athletic male model in his early thirties, lean build, short dark hair,',
   'wearing a fitted charcoal grey athletic t-shirt and matching charcoal grey athletic shorts.',
   'Fully clothed.',
-  'IMPORTANT: render with a fully TRANSPARENT background — the figure must be',
-  'completely isolated on a transparent alpha channel. No background, no environment,',
-  'no ground plane, no floor, no drop shadow, no halo. Only the figure itself.',
+  'Background: render with a fully transparent alpha channel if supported;',
+  'otherwise place the figure on a clean uniform warm matte near-black backdrop',
+  '(hex #14110d) with no floor, no environment, and no drop shadow.',
+  'Either way the figure must be completely isolated — no scene, no props except',
+  'those required by the movement.',
   'Lighting: soft, neutral studio lighting from above-front with a subtle rim light along',
   'the edges of the body so the silhouette reads clearly on any background colour.',
   'Style: photorealistic CGI render, sharp anatomical detail.',
@@ -154,8 +161,9 @@ async function callGenerations(prompt) {
       size: SIZE,
       quality: QUALITY,
       n: 1,
-      background: 'transparent',
-      output_format: 'png',
+      ...(SUPPORTS_TRANSPARENT
+        ? { background: 'transparent', output_format: 'png' }
+        : {}),
     }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
@@ -169,8 +177,10 @@ async function callEdits(prompt, refPath) {
   form.append('prompt', prompt);
   form.append('size', SIZE);
   form.append('quality', QUALITY);
-  form.append('background', 'transparent');
-  form.append('output_format', 'png');
+  if (SUPPORTS_TRANSPARENT) {
+    form.append('background', 'transparent');
+    form.append('output_format', 'png');
+  }
   const blob = new Blob([fs.readFileSync(refPath)], { type: 'image/png' });
   form.append('image', blob, path.basename(refPath));
   const res = await fetch('https://api.openai.com/v1/images/edits', {
