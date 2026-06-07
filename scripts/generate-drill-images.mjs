@@ -39,18 +39,25 @@ const SIZE = args.size || '1536x1024';
 const MODEL = 'gpt-image-1';
 
 // Detailed shared style preamble. Repeated in every prompt to keep the
-// character, framing, lighting, and background consistent. NOTE: the model
-// wears a fitted t-shirt — describing him as "bare-chested" combined with
-// supine ("lying on back") poses reliably trips OpenAI's safety filter.
+// character, framing, lighting, and background consistent.
+//
+// Two important calls:
+//   1. The model wears a fitted t-shirt — describing him as "bare-chested"
+//      combined with supine poses trips OpenAI's safety filter.
+//   2. Background is TRANSPARENT so the same PNG looks right on both light
+//      (cream) and dark (warm-black) theme backgrounds in the app. The API
+//      call also passes background:'transparent' so the alpha channel is
+//      actually preserved in the output.
 const STYLE = [
   'Clean, photorealistic anatomical fitness illustration for a mobility app.',
   'Subject: a single athletic male model in his early thirties, lean build, short dark hair,',
-  'wearing a fitted dark grey athletic t-shirt and dark grey athletic shorts. Fully clothed.',
-  'Setting: isolated against a warm matte near-black background (hex #14110d).',
-  'No floor markings, no environment, no shadows on the ground, no props',
-  'except those explicitly required by the movement.',
-  'Lighting: soft directional studio light from above-front with a gentle rim light;',
-  'warm, low contrast, no harsh highlights.',
+  'wearing a fitted charcoal grey athletic t-shirt and matching charcoal grey athletic shorts.',
+  'Fully clothed.',
+  'IMPORTANT: render with a fully TRANSPARENT background — the figure must be',
+  'completely isolated on a transparent alpha channel. No background, no environment,',
+  'no ground plane, no floor, no drop shadow, no halo. Only the figure itself.',
+  'Lighting: soft, neutral studio lighting from above-front with a subtle rim light along',
+  'the edges of the body so the silhouette reads clearly on any background colour.',
   'Style: photorealistic CGI render, sharp anatomical detail.',
   'NO text, NO labels, NO UI, NO arrows, NO numbers, NO logos, NO watermarks.',
   'Composition: full body in frame, side-profile or 3/4 view, hip-height camera,',
@@ -141,7 +148,15 @@ async function callGenerations(prompt) {
       Authorization: `Bearer ${KEY}`,
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({ model: MODEL, prompt, size: SIZE, quality: QUALITY, n: 1 }),
+    body: JSON.stringify({
+      model: MODEL,
+      prompt,
+      size: SIZE,
+      quality: QUALITY,
+      n: 1,
+      background: 'transparent',
+      output_format: 'png',
+    }),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}: ${(await res.text()).slice(0, 200)}`);
   const j = await res.json();
@@ -154,6 +169,8 @@ async function callEdits(prompt, refPath) {
   form.append('prompt', prompt);
   form.append('size', SIZE);
   form.append('quality', QUALITY);
+  form.append('background', 'transparent');
+  form.append('output_format', 'png');
   const blob = new Blob([fs.readFileSync(refPath)], { type: 'image/png' });
   form.append('image', blob, path.basename(refPath));
   const res = await fetch('https://api.openai.com/v1/images/edits', {
