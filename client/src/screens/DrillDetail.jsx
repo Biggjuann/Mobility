@@ -3,20 +3,33 @@ import { ArrowLeft, ArrowUp, ArrowDown, Check, Circle, Play, XCircle, Lightbulb 
 import { useTheme, FONTS } from '../theme';
 import { richContent, drillAsset } from '../lib/drillContent';
 
-// Image card that disappears entirely if its source is missing or fails to
-// load. This is what lets the rich Drill Detail layout reference hero,
-// phase, and avoid images optimistically — only the ones with files on the
-// server render; the rest silently fall away.
+// Image card with a smooth load: the card holds its 3:2 footprint from the
+// start (no layout jump), the image stays invisible until the browser has
+// fully decoded it, then fades in. If the source 404s or errors, the whole
+// card silently disappears so missing illustrations leave no broken UI.
 function MediaCard({ src, alt, t, className = '' }) {
-  const [failed, setFailed] = useState(false);
-  if (!src || failed) return null;
+  const [status, setStatus] = useState('loading'); // loading | loaded | failed
+  if (!src || status === 'failed') return null;
   return (
-    <div className={`rounded-2xl overflow-hidden ${className}`} style={{ background: t.card }}>
+    <div
+      className={`rounded-2xl overflow-hidden ${className}`}
+      style={{ background: t.card, aspectRatio: '3 / 2' }}
+    >
       <img
         src={src}
         alt={alt}
-        className="w-full block"
-        onError={() => setFailed(true)}
+        decoding="async"
+        loading="eager"
+        className="block"
+        style={{
+          width: '100%',
+          height: '100%',
+          objectFit: 'cover',
+          opacity: status === 'loaded' ? 1 : 0,
+          transition: 'opacity 240ms ease',
+        }}
+        onLoad={() => setStatus('loaded')}
+        onError={() => setStatus('failed')}
       />
     </div>
   );
