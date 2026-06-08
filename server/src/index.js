@@ -116,8 +116,18 @@ app.get('/support', (_req, res) => res.type('html').send(SUPPORT_HTML));
 // Drill illustrations and other static assets. Layout follows
 // /assets/drills/<drill-id>/{hero,phase-*,avoid}.png — drop PNGs and they
 // appear in the app without a code change.
+//
+// The CORS + Cross-Origin-Resource-Policy headers explicitly mark every
+// asset as cross-origin-loadable so the Capacitor WKWebView (served from
+// capacitor://localhost) can render them. Without these, WebKit can silently
+// drop the request even though the URL works in Safari.
 app.use(
   '/assets',
+  (_req, res, next) => {
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
   express.static(path.join(__dirname, '../assets'), {
     maxAge: '30d',
     fallthrough: true,
