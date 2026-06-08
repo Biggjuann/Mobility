@@ -3,41 +3,20 @@ import { ArrowLeft, ArrowUp, ArrowDown, Check, Circle, Play, XCircle, Lightbulb 
 import { useTheme, FONTS } from '../theme';
 import { richContent, drillAsset } from '../lib/drillContent';
 
-// Image card that shows a visible diagnostic stub if the source fails to
-// load, so we can see the attempted URL right in the app while we shake
-// out the iOS WebView's cross-origin behaviour.
+// Image card that disappears entirely if its source is missing or fails to
+// load. This is what lets the rich Drill Detail layout reference hero,
+// phase, and avoid images optimistically — only the ones with files on the
+// server render; the rest silently fall away.
 function MediaCard({ src, alt, t, className = '' }) {
-  const [status, setStatus] = useState('loading'); // loading | ok | failed
-  if (!src) return null;
-  if (status === 'failed') {
-    return (
-      <div
-        className={`rounded-2xl p-4 ${className}`}
-        style={{ background: t.accentSoft, border: `1px dashed ${t.accent}` }}
-      >
-        <div
-          style={{
-            fontFamily: FONTS.mono,
-            fontSize: 10,
-            color: t.muted,
-            wordBreak: 'break-all',
-          }}
-        >
-          [image failed to load]
-          <br />
-          {src}
-        </div>
-      </div>
-    );
-  }
+  const [failed, setFailed] = useState(false);
+  if (!src || failed) return null;
   return (
     <div className={`rounded-2xl overflow-hidden ${className}`} style={{ background: t.card }}>
       <img
         src={src}
         alt={alt}
         className="w-full block"
-        onLoad={() => setStatus('ok')}
-        onError={() => setStatus('failed')}
+        onError={() => setFailed(true)}
       />
     </div>
   );
