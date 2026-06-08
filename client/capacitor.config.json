@@ -2,6 +2,9 @@
   "appId": "com.jungbrothers.mobility",
   "appName": "Mobility",
   "webDir": "dist",
+  "server": {
+    "allowNavigation": ["mobility-production.up.railway.app"]
+  },
   "ios": {
     "contentInset": "always"
   }
