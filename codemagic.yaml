@@ -51,6 +51,19 @@ workflows:
           sed -i '' 's|TARGETED_DEVICE_FAMILY = "1,2";|TARGETED_DEVICE_FAMILY = "1";|g' \
             client/ios/App/App.xcodeproj/project.pbxproj
           grep -n 'TARGETED_DEVICE_FAMILY' client/ios/App/App.xcodeproj/project.pbxproj | head -4
+      - name: Allow external loads in the WebView
+        script: |
+          # Capacitor 8's default Info.plist omits NSAppTransportSecurity, so
+          # iOS strict-ATS silently blocks external <img> / fetch in the
+          # WKWebView even when the same HTTPS URLs work in Safari. Inject the
+          # web-content arbitrary-loads exception (the same key Capacitor 6
+          # used to ship by default) so drill images and other Railway-hosted
+          # assets load inside the app. Idempotent — safe to re-run.
+          PLIST=client/ios/App/App/Info.plist
+          /usr/libexec/PlistBuddy -c "Delete :NSAppTransportSecurity" "$PLIST" 2>/dev/null || true
+          /usr/libexec/PlistBuddy -c "Add :NSAppTransportSecurity dict" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Add :NSAppTransportSecurity:NSAllowsArbitraryLoadsInWebContent bool true" "$PLIST"
+          /usr/libexec/PlistBuddy -c "Print :NSAppTransportSecurity" "$PLIST"
       - name: Generate app icon set
         script: |
           # Replace Capacitor's placeholder icon with the real one in
