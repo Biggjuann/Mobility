@@ -75,6 +75,49 @@ const STYLE = [
   'limb stays inside the frame, with at least 10% empty padding on every side.',
 ].join(' ');
 
+// Per-drill prompt overrides for poses that the generic POSITION_HINT can't
+// describe well enough on its own (twisted, inverted, or asymmetric shapes
+// the model defaults badly on). Keyed by AssetDir slug. When an override
+// exists it replaces the body of the prompt entirely (STYLE is always
+// prepended); when it doesn't, buildPrompt falls back to the generic
+// position hint + cues.
+const DRILL_PROMPTS = {
+  'thread-the-needle': [
+    'Yoga pose Parsva Balasana (Thread the Needle).',
+    'Male model in quadruped/table-top base, but he has rotated his upper torso so his',
+    'RIGHT arm is fully extended and threaded FAR UNDER his LEFT armpit, with his RIGHT',
+    'palm flat on the floor pointing toward the left side of the frame.',
+    'His RIGHT shoulder, RIGHT ear, and RIGHT cheek rest on the floor.',
+    'His LEFT hand stays planted directly under his LEFT shoulder, supporting his weight.',
+    'His hips remain stacked over his knees, square to the floor — only the upper torso rotates.',
+    'Camera at a 45° angle from above-side showing the deep spinal twist clearly.',
+  ].join(' '),
+  'skin-the-cats': [
+    'Gymnastic ring/bar "skin-the-cat" movement, mid-rotation.',
+    'Male model hanging from a horizontal pull-up bar with both hands overgrip.',
+    'He has tucked his knees to his chest and pulled them up between his arms,',
+    'his hips inverted above his head, body folded compact — about to extend his legs',
+    'behind his head through and downward. Bar and grip clearly visible at the top of the frame.',
+    'Side-profile camera.',
+  ].join(' '),
+  'german-hang': [
+    'German hang position from a horizontal pull-up bar.',
+    'Male model hanging fully inverted: hands gripping the bar overhead with arms straight,',
+    'body has rotated through so his torso is upside-down, his legs extended downward',
+    'behind his head until his feet hover above or just touch the floor below the bar.',
+    'Shoulders extended in a passive stretch. Bar at the top of the frame, full body visible.',
+    'Side-profile camera.',
+  ].join(' '),
+  '90-90-hip-rotations': [
+    '90/90 seated hip rotation position.',
+    'Male model seated on the floor. His FRONT leg is bent 90° in front of him,',
+    'shin parallel to the front edge of the frame, knee out to one side, foot to the other.',
+    'His BACK leg is bent 90° to the opposite side, with the inner thigh, knee, and shin',
+    'flat on the floor. Both knees at 90° angles. Chest tall, hips heavy. Hands rest lightly',
+    'on his front shin. Camera straight on or at 30° elevation, full body in frame.',
+  ].join(' '),
+};
+
 const POSITION_HINT = {
   Quadruped: 'Body in quadruped (table-top) position — hands directly under shoulders, knees directly under hips.',
   Supine: 'Lying flat on the back on the floor.',
@@ -136,6 +179,15 @@ console.log(`\nDone. Generated: ${made}. Skipped: ${skipped}. Output: ${path.rel
 
 // ── helpers ────────────────────────────────────────────────────────────────
 function buildPrompt(d) {
+  const override = DRILL_PROMPTS[d.AssetDir];
+  if (override) {
+    return [
+      STYLE,
+      '',
+      override,
+      'Hold the position in a clean mid-movement snapshot. Anatomically accurate. No exaggeration.',
+    ].join('\n');
+  }
   const cues = (d.Cues || '').split(' · ').filter(Boolean);
   const lines = [
     STYLE,
