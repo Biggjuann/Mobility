@@ -129,7 +129,15 @@ app.use(
     next();
   },
   express.static(path.join(__dirname, '../assets'), {
-    maxAge: '30d',
+    // 5-minute browser cache + ETag revalidation. New image uploads show up
+    // in already-installed apps within a few minutes instead of the 30-day
+    // lock-in from the original setting.
+    maxAge: '5m',
+    etag: true,
+    lastModified: true,
+    setHeaders(res) {
+      res.setHeader('Cache-Control', 'public, max-age=300, must-revalidate');
+    },
     fallthrough: true,
     index: false,
   }),
